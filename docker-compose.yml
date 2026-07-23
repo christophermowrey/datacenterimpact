@@ -1,0 +1,24 @@
+services:
+  web:
+    build: .
+    ports:
+      - "3000:3000"
+    env_file: .env.local
+    depends_on:
+      db:
+        condition: service_healthy
+  db:
+    image: postgis/postgis:16-3.4
+    environment:
+      POSTGRES_DB: gridline
+      POSTGRES_USER: gridline
+      POSTGRES_PASSWORD: change-me
+    volumes:
+      - gridline-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U gridline -d gridline"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+volumes:
+  gridline-db:
