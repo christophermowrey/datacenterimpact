@@ -29,7 +29,7 @@ Other commands: `npm run build`, `npm start`, and `npm test`.
 
 - Sample facilities are intentionally labeled demo data and must be replaced by reviewed records before launch.
 - Address search is currently a local UI demonstration. Production work must add a server-side geocoder, rate limiting, minimized IP handling, restricted lead storage, and configurable retention before collecting residential searches.
-- The visual map is an MVP placeholder. The production map adapter should use MapLibre with a compliant, configurable OSM-derived style URL.
+- The map uses MapLibre and OpenStreetMap raster tiles for local development. Production must use a compliant, configurable OSM-derived tile provider rather than relying on the public OSM tile server.
 - The score range is designed to remain transparent and versioned; it is not a property-value, health, or legal prediction.
 
 ## Next implementation milestone

@@ -1,6 +1,6 @@
 # AWS Migration Runbook
 
-This document is for the first deployment after the local-only milestone. Do not follow it until the app has been reviewed and the demo records have been replaced with reviewed data. The target is one Amazon Lightsail Linux instance running Docker Compose, with a monthly budget of approximately $60.
+This document is for the first deployment after the local-only milestone. Do not follow it until the app has been reviewed and the demo records have been replaced with reviewed data. The target is one Amazon Lightsail Linux instance running Docker Compose, with a monthly budget of approximately $60. The public OpenStreetMap tile server is suitable for local testing only; select and configure a compliant production tile provider before public launch.
 
 ## 0. What this creates
 
