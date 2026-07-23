@@ -4,12 +4,14 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import type { Facility } from '@/lib/facilities'
 
-type MapViewProps = { facilities: Facility[]; selected: Facility | null; onSelect: (facility: Facility) => void }
+export type SearchedLocation = { latitude: number; longitude: number; label: string }
+type MapViewProps = { facilities: Facility[]; selected: Facility | null; onSelect: (facility: Facility) => void; searchedLocation: SearchedLocation | null }
 
-export default function MapView({ facilities, selected, onSelect }: MapViewProps) {
+export default function MapView({ facilities, selected, onSelect, searchedLocation }: MapViewProps) {
   const mapElement = useRef<HTMLDivElement>(null)
   const mapRef = useRef<import('maplibre-gl').Map | null>(null)
   const markersRef = useRef<import('maplibre-gl').Marker[]>([])
+  const searchedMarkerRef = useRef<import('maplibre-gl').Marker | null>(null)
   const [ready, setReady] = useState(false)
 
   useEffect(() => {
@@ -40,6 +42,10 @@ export default function MapView({ facilities, selected, onSelect }: MapViewProps
   }, [])
 
   useEffect(() => {
+    if (searchedLocation && mapRef.current) mapRef.current.flyTo({ center: [searchedLocation.longitude, searchedLocation.latitude], zoom: 13, duration: 900 })
+  }, [searchedLocation])
+
+  useEffect(() => {
     if (!ready || !mapRef.current) return
     let active = true
     import('maplibre-gl').then((maplibregl) => {
@@ -58,5 +64,16 @@ export default function MapView({ facilities, selected, onSelect }: MapViewProps
     return () => { active = false }
   }, [facilities, selected, onSelect, ready])
 
-  return <div className="map" aria-label="Interactive map of Greater Houston data centers" role="application"><div ref={mapElement} className="maplibre-canvas" />{selected && <div className="map-card"><div className="card-kicker"><span className={`dot ${selected.color}`} />{selected.statusLabel}<span className="card-distance">{selected.distance} mi away</span></div><h3>{selected.name}</h3><p>{selected.city}, {selected.county} County · {selected.classLabel}</p><div className="card-footer"><span className="confidence">{selected.confidence} confidence</span><Link href={`/data-centers/${selected.slug}`}>View full details <span>→</span></Link></div></div>}</div>
+  useEffect(() => {
+    if (!ready || !mapRef.current) return
+    import('maplibre-gl').then((maplibregl) => {
+      searchedMarkerRef.current?.remove()
+      searchedMarkerRef.current = searchedLocation
+        ? new maplibregl.Marker({ color: '#e26e3e' }).setLngLat([searchedLocation.longitude, searchedLocation.latitude]).addTo(mapRef.current!)
+        : null
+    })
+    return () => { searchedMarkerRef.current?.remove() }
+  }, [searchedLocation, ready])
+
+  return <div className="map" aria-label="Interactive map of Greater Houston data centers" role="application"><div ref={mapElement} className="maplibre-canvas" />{searchedLocation && <div className="searched-location" aria-label={`Searched location: ${searchedLocation.label}`}><span>⌖</span><strong>Searched location</strong><small>{searchedLocation.label}</small></div>}{selected && <div className="map-card"><div className="card-kicker"><span className={`dot ${selected.color}`} />{selected.statusLabel}<span className="card-distance">{selected.distance} mi away</span></div><h3>{selected.name}</h3><p>{selected.city}, {selected.county} County · {selected.classLabel}</p><div className="card-footer"><span className="confidence">{selected.confidence} confidence</span><Link href={`/data-centers/${selected.slug}`}>View full details <span>→</span></Link></div></div>}</div>
 }

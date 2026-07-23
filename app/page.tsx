@@ -3,7 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link'
 import { facilities, type Facility, type FacilityStatus } from '@/lib/facilities'
-import MapView from '@/components/MapView'
+import MapView, { type SearchedLocation } from '@/components/MapView'
 
 const statuses: { key: FacilityStatus; label: string; color: string }[] = [
   { key: 'operational', label: 'Operational', color: 'green' },
@@ -17,16 +17,35 @@ export default function Home() {
   const [showAdditional, setShowAdditional] = useState(false)
   const [selected, setSelected] = useState<Facility | null>(facilities[0])
   const [searched, setSearched] = useState(false)
+  const [searchedLocation, setSearchedLocation] = useState<SearchedLocation | null>(null)
+  const [searchMessage, setSearchMessage] = useState('')
 
   const visible = facilities.filter((facility) =>
     (activeStatus === 'all' || facility.status === activeStatus) &&
     (showAdditional || facility.class !== 'additional') &&
-    (!query || `${facility.name} ${facility.city} ${facility.county}`.toLowerCase().includes(query.toLowerCase())),
+    (!query || searchedLocation || `${facility.name} ${facility.city} ${facility.county}`.toLowerCase().includes(query.toLowerCase())),
   )
 
-  function search(event: React.FormEvent) {
+  async function search(event: React.FormEvent) {
     event.preventDefault()
-    if (query.trim()) setSearched(true)
+    const value = query.trim()
+    if (!value) return
+    setSearchMessage('Searching the location...')
+    try {
+      const response = await fetch(`/api/geocode?q=${encodeURIComponent(value)}`)
+      const payload = await response.json() as { result?: SearchedLocation | null; error?: string }
+      if (payload.result) {
+        setSearchedLocation(payload.result)
+        setSearchMessage('Location found. Nearby facilities are shown for this point.')
+      } else {
+        setSearchedLocation(null)
+        setSearchMessage(payload.error ?? 'No address found. Showing matching facility names instead.')
+      }
+      setSearched(true)
+    } catch {
+      setSearchMessage('Location search is unavailable. Try a facility name or ZIP code.')
+      setSearched(true)
+    }
   }
 
   return (
@@ -38,7 +57,7 @@ export default function Home() {
 
       <section className="hero">
         <div className="hero-copy"><p className="eyebrow">Harris + Fort Bend counties <span className="live-dot" /> Demo data</p><h1>Know what’s<br /><em>nearby.</em></h1><p className="lede">A clearer view of data centers, compute infrastructure, and what they could mean for your neighborhood.</p></div>
-        <div className="hero-stats"><div><strong>18</strong><span>mapped facilities</span></div><div><strong>03</strong><span>lifecycle statuses</span></div><div><strong>02</strong><span>counties covered</span></div></div>
+        <div className="hero-stats"><div><strong>05</strong><span>demo records</span></div><div><strong>35+</strong><span>directory estimate</span></div><div><strong>02</strong><span>counties covered</span></div></div>
       </section>
 
       <section className="workspace">
@@ -47,9 +66,9 @@ export default function Home() {
           <div className="control-row"><div className="filter-label">SHOWING <span>{visible.length} places</span></div><div className="status-filters"><button className={activeStatus === 'all' ? 'active' : ''} onClick={() => setActiveStatus('all')}>All</button>{statuses.map((status) => <button key={status.key} className={activeStatus === status.key ? 'active' : ''} onClick={() => setActiveStatus(status.key)}><b className={`dot ${status.color}`} />{status.label}</button>)}</div><label className="toggle"><input type="checkbox" checked={showAdditional} onChange={(e) => setShowAdditional(e.target.checked)} /><span className="switch" /> Additional compute</label></div>
         </div>
 
-        {searched && <div className="search-note"><span>⌖</span> Showing a sample search near <strong>{query}</strong>. Distances are calculated from the searched point. <button onClick={() => { setSearched(false); setQuery('') }}>Clear</button></div>}
+        {searched && <div className="search-note"><span>⌖</span> <strong>{searchMessage}</strong> <button onClick={() => { setSearched(false); setSearchedLocation(null); setSearchMessage(''); setQuery('') }}>Clear</button></div>}
         <div className="map-layout">
-          <MapView facilities={visible} selected={selected} onSelect={setSelected} />
+          <MapView facilities={visible} selected={selected} onSelect={setSelected} searchedLocation={searchedLocation} />
           <aside className="results"><div className="results-head"><div><p className="eyebrow">NEARBY FACILITIES</p><h2>{searched ? 'Around your search' : 'Greater Houston'}</h2></div><button className="sort">Nearest <span>⌄</span></button></div><div className="result-list">{visible.map((facility) => <button className={`result ${selected?.slug === facility.slug ? 'chosen' : ''}`} key={facility.slug} onClick={() => setSelected(facility)}><div className="result-top"><span className={`status-pill ${facility.color}`}>{facility.statusLabel}</span><span>{facility.distance} mi</span></div><h3>{facility.name}</h3><p>{facility.city} · {facility.classLabel}</p><div className="result-bottom"><span className="score">{facility.score[0]}–{facility.score[1]} <small>impact</small></span><span className="confidence">{facility.confidence}</span></div></button>)}{visible.length === 0 && <div className="empty">No facilities match those filters.</div>}</div><div className="results-foot">Last verified <strong>12 Jun 2025</strong><span>·</span><button>About our sources <span>↗</span></button></div></aside>
         </div>
       </section>
