@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-Open `http://localhost:3000`.
+Open `http://localhost:3001` when using Docker Compose. The first port is the local computer port; the second is the port inside the container.
 
 ## Docker-only local run
 
