@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import type { Facility } from '@/lib/facilities'
 
-export type SearchedLocation = { latitude: number; longitude: number; label: string }
+export type SearchedLocation = { latitude: number; longitude: number; label: string; coverage?: 'supported' | 'outside' }
 type MapViewProps = { facilities: Facility[]; selected: Facility | null; onSelect: (facility: Facility) => void; searchedLocation: SearchedLocation | null }
 
 export default function MapView({ facilities, selected, onSelect, searchedLocation }: MapViewProps) {
@@ -75,5 +75,5 @@ export default function MapView({ facilities, selected, onSelect, searchedLocati
     return () => { searchedMarkerRef.current?.remove() }
   }, [searchedLocation, ready])
 
-  return <div className="map" aria-label="Interactive map of Greater Houston data centers" role="application"><div ref={mapElement} className="maplibre-canvas" />{searchedLocation && <div className="searched-location" aria-label={`Searched location: ${searchedLocation.label}`}><span>⌖</span><strong>Searched location</strong><small>{searchedLocation.label}</small></div>}{selected && <div className="map-card"><div className="card-kicker"><span className={`dot ${selected.color}`} />{selected.statusLabel}<span className="card-distance">{selected.distance} mi away</span></div><h3>{selected.name}</h3><p>{selected.city}, {selected.county} County · {selected.classLabel}</p><div className="card-footer"><span className="confidence">{selected.confidence} confidence</span><Link href={`/data-centers/${selected.slug}`}>View full details <span>→</span></Link></div></div>}</div>
+  return <div className="map" aria-label="Interactive map of Greater Houston data centers" role="application"><div ref={mapElement} className="maplibre-canvas" />{searchedLocation && <div className="searched-location" aria-label={`Searched location: ${searchedLocation.label}`}><span>⌖</span><strong>Searched location</strong><small>{searchedLocation.label}</small></div>}{selected && <div className="map-card"><div className="card-kicker"><span className={`dot ${selected.color}`} />{selected.statusLabel}<span className="card-distance">{selected.distanceLabel ?? 'Distance pending'}</span></div><h3>{selected.name}</h3><p>{selected.city}, {selected.county} County · {selected.classLabel}</p><div className="card-footer"><span className="confidence">{selected.confidence} confidence</span><Link href={`/data-centers/${selected.slug}`}>View full details <span>→</span></Link></div></div>}</div>
 }

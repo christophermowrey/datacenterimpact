@@ -1,4 +1,5 @@
 import { NextResponse } from 'next/server'
+import { getCoverageStatus } from '@/lib/geo'
 
 export async function GET(request: Request) {
   const query = new URL(request.url).searchParams.get('q')?.trim()
@@ -16,7 +17,9 @@ export async function GET(request: Request) {
     const results = await response.json() as { lat: string; lon: string; display_name: string }[]
     const result = results[0]
     if (!result) return NextResponse.json({ result: null })
-    return NextResponse.json({ result: { latitude: Number(result.lat), longitude: Number(result.lon), label: result.display_name } })
+    const latitude = Number(result.lat)
+    const longitude = Number(result.lon)
+    return NextResponse.json({ result: { latitude, longitude, label: result.display_name, coverage: getCoverageStatus(latitude, longitude) } })
   } catch {
     return NextResponse.json({ error: 'The location search could not be completed.' }, { status: 502 })
   }

@@ -26,6 +26,11 @@ Run this checklist in Chrome and one mobile-sized browser window after each UI c
 - [ ] All, Operational, Under construction, and Announced / planned filters update both map pins and results.
 - [ ] Additional compute is hidden by default and appears when enabled.
 - [ ] Searching `Houston`, `Katy`, or a facility name updates the visible records.
+- [ ] Typing `Pasadena` shows Pasadena, Texas first plus out-of-state alternatives.
+- [ ] Selecting a suggestion confirms the full location before changing the map.
+- [ ] Editing a confirmed location clears the old location and distances.
+- [ ] Selecting a new address recalculates facility distances and nearest-first ordering.
+- [ ] An outside-coverage result clearly says it is outside Harris + Fort Bend coverage.
 - [ ] Search feedback appears after submit.
 - [ ] Clear removes the search state.
 - [ ] A no-match search displays a useful empty state.

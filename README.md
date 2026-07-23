@@ -28,7 +28,7 @@ Other commands: `npm run build`, `npm start`, and `npm test`.
 ## Product boundaries
 
 - Sample facilities are intentionally labeled demo data and must be replaced by reviewed records before launch.
-- Address search is currently a local UI demonstration. Production work must add a server-side geocoder, rate limiting, minimized IP handling, restricted lead storage, and configurable retention before collecting residential searches.
+- Address search uses a server-side, Texas-biased Nominatim adapter for local development. Suggestions are not stored as leads yet. Production work must add rate limiting, minimized IP handling, restricted lead storage, a compliant provider, and configurable retention before collecting residential searches.
 - The map uses MapLibre and OpenStreetMap raster tiles for local development. Production must use a compliant, configurable OSM-derived tile provider rather than relying on the public OSM tile server.
 - The score range is designed to remain transparent and versioned; it is not a property-value, health, or legal prediction.
 
