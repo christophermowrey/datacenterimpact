@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useRef, useState } from 'react'
 import Link from 'next/link'
 import { facilities, type Facility, type FacilityStatus } from '@/lib/facilities'
 
@@ -16,6 +16,11 @@ export default function Home() {
   const [showAdditional, setShowAdditional] = useState(false)
   const [selected, setSelected] = useState<Facility | null>(facilities[0])
   const [searched, setSearched] = useState(false)
+  const [mapZoom, setMapZoom] = useState(1)
+  const [mapOffset, setMapOffset] = useState({ x: 0, y: 0 })
+  const [locationMessage, setLocationMessage] = useState('')
+  const [isDragging, setIsDragging] = useState(false)
+  const dragStart = useRef({ x: 0, y: 0, offsetX: 0, offsetY: 0 })
 
   const visible = facilities.filter((facility) =>
     (activeStatus === 'all' || facility.status === activeStatus) &&
@@ -26,6 +31,40 @@ export default function Home() {
   function search(event: React.FormEvent) {
     event.preventDefault()
     if (query.trim()) setSearched(true)
+  }
+
+  function changeZoom(amount: number) {
+    setMapZoom((current) => Math.max(0.8, Math.min(2.2, Number((current + amount).toFixed(2)))))
+  }
+
+  function startMapDrag(event: React.PointerEvent<HTMLDivElement>) {
+    if ((event.target as HTMLElement).closest('button, a')) return
+    event.currentTarget.setPointerCapture(event.pointerId)
+    dragStart.current = { x: event.clientX, y: event.clientY, offsetX: mapOffset.x, offsetY: mapOffset.y }
+    setIsDragging(true)
+  }
+
+  function moveMap(event: React.PointerEvent<HTMLDivElement>) {
+    if (!isDragging) return
+    setMapOffset({ x: dragStart.current.offsetX + event.clientX - dragStart.current.x, y: dragStart.current.offsetY + event.clientY - dragStart.current.y })
+  }
+
+  function stopMapDrag(event: React.PointerEvent<HTMLDivElement>) {
+    if (event.currentTarget.hasPointerCapture(event.pointerId)) event.currentTarget.releasePointerCapture(event.pointerId)
+    setIsDragging(false)
+  }
+
+  function locateUser() {
+    if (!navigator.geolocation) {
+      setLocationMessage('Location is not available in this browser.')
+      return
+    }
+    setLocationMessage('Requesting your location...')
+    navigator.geolocation.getCurrentPosition(
+      () => setLocationMessage('Location permission granted. Demo map stays centered on Houston.'),
+      () => setLocationMessage('Location permission was not granted.'),
+      { timeout: 8000 },
+    )
   }
 
   return (
@@ -48,10 +87,13 @@ export default function Home() {
 
         {searched && <div className="search-note"><span>⌖</span> Showing a sample search near <strong>{query}</strong>. Distances are calculated from the searched point. <button onClick={() => { setSearched(false); setQuery('') }}>Clear</button></div>}
         <div className="map-layout">
-          <div className="map" aria-label="Map of Greater Houston data centers" role="img">
-            <div className="map-tools"><button title="Zoom in">+</button><button title="Zoom out">−</button><button title="Use my location">⌖</button></div><div className="map-label katy">KATY</div><div className="map-label houston">HOUSTON</div><div className="map-label sugar">SUGAR LAND</div><div className="highway h1" /><div className="highway h2" /><div className="highway h3" />
-            {visible.map((facility) => <button key={facility.slug} className={`map-pin ${facility.status} ${selected?.slug === facility.slug ? 'selected' : ''}`} style={{ left: `${facility.mapX}%`, top: `${facility.mapY}%` }} onClick={() => setSelected(facility)} aria-label={`View ${facility.name}`}><span>{facility.status === 'operational' ? '●' : facility.status === 'construction' ? '◆' : '○'}</span></button>)}
+          <div className={`map ${isDragging ? 'dragging' : ''}`} aria-label="Interactive map of Greater Houston data centers" role="application" onPointerDown={startMapDrag} onPointerMove={moveMap} onPointerUp={stopMapDrag} onPointerCancel={stopMapDrag} onWheel={(event) => { event.preventDefault(); changeZoom(event.deltaY > 0 ? -0.1 : 0.1) }}>
+            <div className="map-tools"><button title="Zoom in" aria-label="Zoom in" onClick={() => changeZoom(0.2)}>+</button><button title="Zoom out" aria-label="Zoom out" onClick={() => changeZoom(-0.2)}>−</button><button title="Use my location" aria-label="Use my location" onClick={locateUser}>⌖</button></div>
+            <div className="map-canvas" style={{ transform: `translate(${mapOffset.x}px, ${mapOffset.y}px) scale(${mapZoom})` }}><div className="map-label katy">KATY</div><div className="map-label houston">HOUSTON</div><div className="map-label sugar">SUGAR LAND</div><div className="highway h1" /><div className="highway h2" /><div className="highway h3" />
+              {visible.map((facility) => <button key={facility.slug} className={`map-pin ${facility.status} ${selected?.slug === facility.slug ? 'selected' : ''}`} style={{ left: `${facility.mapX}%`, top: `${facility.mapY}%` }} onClick={() => setSelected(facility)} aria-label={`View ${facility.name}`}><span>{facility.status === 'operational' ? '●' : facility.status === 'construction' ? '◆' : '○'}</span></button>)}
+            </div>
             {selected && <div className="map-card"><div className="card-kicker"><span className={`dot ${selected.color}`} />{selected.statusLabel}<span className="card-distance">{selected.distance} mi away</span></div><h3>{selected.name}</h3><p>{selected.city}, {selected.county} County · {selected.classLabel}</p><div className="card-footer"><span className="confidence">{selected.confidence} confidence</span><Link href={`/data-centers/${selected.slug}`}>View full details <span>→</span></Link></div></div>}
+            <span className="map-hint">Drag to explore · Scroll to zoom</span>{locationMessage && <span className="location-message">{locationMessage}</span>}
           </div>
           <aside className="results"><div className="results-head"><div><p className="eyebrow">NEARBY FACILITIES</p><h2>{searched ? 'Around your search' : 'Greater Houston'}</h2></div><button className="sort">Nearest <span>⌄</span></button></div><div className="result-list">{visible.map((facility) => <button className={`result ${selected?.slug === facility.slug ? 'chosen' : ''}`} key={facility.slug} onClick={() => setSelected(facility)}><div className="result-top"><span className={`status-pill ${facility.color}`}>{facility.statusLabel}</span><span>{facility.distance} mi</span></div><h3>{facility.name}</h3><p>{facility.city} · {facility.classLabel}</p><div className="result-bottom"><span className="score">{facility.score[0]}–{facility.score[1]} <small>impact</small></span><span className="confidence">{facility.confidence}</span></div></button>)}{visible.length === 0 && <div className="empty">No facilities match those filters.</div>}</div><div className="results-foot">Last verified <strong>12 Jun 2025</strong><span>·</span><button>About our sources <span>↗</span></button></div></aside>
         </div>
