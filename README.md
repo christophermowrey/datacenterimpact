@@ -13,6 +13,16 @@ npm run dev
 
 Open `http://localhost:3000`.
 
+## Docker-only local run
+
+Docker is optional. This project is intended to remain local and is not configured for GitHub Pages or a public web deployment.
+
+```bash
+docker compose up --build
+```
+
+Open `http://localhost:3000`. Stop it with `Ctrl+C`, or use `docker compose down` from another terminal.
+
 Other commands: `npm run build`, `npm start`, and `npm test`.
 
 ## Product boundaries
