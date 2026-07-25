@@ -5,6 +5,7 @@ import Link from 'next/link'
 import { facilities, type Facility, type FacilityStatus } from '@/lib/facilities'
 import MapView, { type SearchedLocation } from '@/components/MapView'
 import { formatMiles, haversineMiles } from '@/lib/geo'
+import { calculateImpact } from '@/lib/impact'
 
 const statuses: { key: FacilityStatus; label: string; color: string }[] = [
   { key: 'operational', label: 'Operational', color: 'green' },
@@ -60,7 +61,8 @@ export default function Home() {
   )
   const visible = filtered.map((facility) => {
     const miles = searchedLocation ? haversineMiles(searchedLocation, facility) : undefined
-    return { ...facility, distanceMiles: miles, distanceLabel: miles === undefined ? undefined : `${formatMiles(miles)} mi` }
+    const impact = miles === undefined ? null : calculateImpact(facility, miles)
+    return { ...facility, distanceMiles: miles, distanceLabel: miles === undefined ? undefined : `${formatMiles(miles)} mi`, score: impact ? [impact.lower, impact.upper] as [number, number] : facility.score }
   }).sort((a, b) => (a.distanceMiles ?? Number.POSITIVE_INFINITY) - (b.distanceMiles ?? Number.POSITIVE_INFINITY))
 
   const visibleSlugs = visible.map((facility) => facility.slug).join('|')
