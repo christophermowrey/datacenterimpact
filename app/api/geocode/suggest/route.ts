@@ -3,6 +3,18 @@ import { getCoverageStatus } from '@/lib/geo'
 
 type NominatimResult = { lat: string; lon: string; display_name: string; type?: string; addresstype?: string; address?: { city?: string; town?: string; village?: string; state?: string; postcode?: string } }
 
+function googleSuggestions(query: string) {
+  const key = process.env.GOOGLE_MAPS_API_KEY
+  if (!key) return null
+  const url = new URL('https://maps.googleapis.com/maps/api/place/autocomplete/json')
+  url.searchParams.set('input', query)
+  url.searchParams.set('components', 'country:us')
+  url.searchParams.set('location', '29.7604,-95.3698')
+  url.searchParams.set('radius', '180000')
+  url.searchParams.set('key', key)
+  return fetch(url, { next: { revalidate: 300 } }).then((response) => response.json() as Promise<{ status: string; predictions?: { place_id: string; description: string; structured_formatting?: { main_text: string } }[] }>)
+}
+
 export async function GET(request: Request) {
   const query = new URL(request.url).searchParams.get('q')?.trim()
   if (!query || query.length < 3 || query.length > 200) return NextResponse.json({ suggestions: [] })
@@ -21,6 +33,12 @@ export async function GET(request: Request) {
     return response.json() as Promise<NominatimResult[]>
   }
   try {
+    const google = await googleSuggestions(query)
+    if (google) {
+      if (google.status === 'OK' || google.status === 'ZERO_RESULTS') {
+        return NextResponse.json({ suggestions: (google.predictions ?? []).map((prediction) => ({ label: prediction.description, shortLabel: prediction.structured_formatting?.main_text ?? prediction.description, kind: 'place', coverage: 'unknown', source: 'google', placeId: prediction.place_id })) })
+      }
+    }
     const results = await fetchResults(url)
     if (isPlaceOnlyQuery && !results.some((result) => result.address?.state?.toLowerCase() !== 'texas')) {
       const broaderUrl = new URL(url)
@@ -35,7 +53,7 @@ export async function GET(request: Request) {
         const city = result.address?.city ?? result.address?.town ?? result.address?.village ?? ''
         const state = result.address?.state ?? ''
         const isTexas = state.toLowerCase() === 'texas'
-        return { latitude, longitude, label: result.display_name, shortLabel: [city, state, result.address?.postcode].filter(Boolean).join(', '), kind: result.addresstype ?? result.type ?? 'place', coverage: getCoverageStatus(latitude, longitude), isTexas }
+        return { latitude, longitude, label: result.display_name, shortLabel: [city, state, result.address?.postcode].filter(Boolean).join(', '), kind: result.addresstype ?? result.type ?? 'place', coverage: getCoverageStatus(latitude, longitude), source: 'openstreetmap', precision: result.addresstype === 'postcode' ? 'zip_centroid' : result.addresstype === 'city' || result.addresstype === 'town' || result.addresstype === 'village' ? 'municipality_boundary' : 'exact_address', isTexas }
       })
       .filter((suggestion, index, all) => all.findIndex((candidate) => Math.abs(candidate.latitude - suggestion.latitude) < 0.0001 && Math.abs(candidate.longitude - suggestion.longitude) < 0.0001) === index)
       .sort((a, b) => Number(b.isTexas) - Number(a.isTexas))

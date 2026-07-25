@@ -7,6 +7,7 @@ Run this checklist in Chrome and one mobile-sized browser window after each UI c
 - [ ] `docker compose up -d --build` completes without errors.
 - [ ] `docker compose ps` shows `web` running and `db` healthy.
 - [ ] `http://localhost:3000` loads the Gridline Houston page.
+- [ ] `/open-map` loads the standalone OpenStreetMap view.
 - [ ] Refreshing the page stays on Gridline Houston.
 - [ ] `docker compose down` stops the project without affecting other Docker projects.
 
@@ -31,6 +32,8 @@ Run this checklist in Chrome and one mobile-sized browser window after each UI c
 - [ ] Editing a confirmed location clears the old location and distances.
 - [ ] Selecting a new address recalculates facility distances and nearest-first ordering.
 - [ ] An outside-coverage result clearly says it is outside Harris + Fort Bend coverage.
+- [ ] An unresolved exact address with a recognizable city explains that the map provider lacked the street address and offers the city-area fallback.
+- [ ] An unresolved search with no recognizable city tells the user to add a city, state, or ZIP code.
 - [ ] Search feedback appears after submit.
 - [ ] Clear removes the search state.
 - [ ] A no-match search displays a useful empty state.

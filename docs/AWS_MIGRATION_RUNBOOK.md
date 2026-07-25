@@ -2,6 +2,8 @@
 
 This document is for the first deployment after the local-only milestone. Do not follow it until the app has been reviewed and the demo records have been replaced with reviewed data. The target is one Amazon Lightsail Linux instance running Docker Compose, with a monthly budget of approximately $60. The public OpenStreetMap tile server is suitable for local testing only; select and configure a compliant production tile provider before public launch.
 
+Google Places Autocomplete is optional. If enabled, use a restricted server-side key, configure Google Cloud budget alerts and quotas, and review Google Places storage/display terms before retaining normalized residential search data. Without the key, the application uses its OpenStreetMap/Nominatim fallback.
+
 ## 0. What this creates
 
 - One Lightsail Linux server running the web container and PostgreSQL/PostGIS.

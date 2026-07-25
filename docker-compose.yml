@@ -6,6 +6,7 @@ services:
     environment:
       GEOCODER_PROVIDER: mock
       NEXT_PUBLIC_MAP_STYLE_URL: ""
+      GOOGLE_MAPS_API_KEY: ""
     depends_on:
       db:
         condition: service_healthy

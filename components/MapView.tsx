@@ -4,7 +4,7 @@ import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import type { Facility } from '@/lib/facilities'
 
-export type SearchedLocation = { latitude: number; longitude: number; label: string; coverage?: 'supported' | 'outside' }
+export type SearchedLocation = { latitude: number; longitude: number; label: string; coverage?: 'supported' | 'outside' | 'unknown'; source?: 'google' | 'openstreetmap'; precision?: 'exact_address' | 'place_label' | 'municipality_boundary' | 'zip_centroid'; fallbackReason?: 'exact_address_not_found' }
 type MapViewProps = { facilities: Facility[]; selected: Facility | null; onSelect: (facility: Facility) => void; searchedLocation: SearchedLocation | null }
 
 export default function MapView({ facilities, selected, onSelect, searchedLocation }: MapViewProps) {

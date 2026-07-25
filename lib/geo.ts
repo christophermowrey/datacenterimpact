@@ -1,4 +1,4 @@
-export type CoverageStatus = 'supported' | 'outside'
+export type CoverageStatus = 'supported' | 'outside' | 'unknown'
 
 export function getCoverageStatus(latitude: number, longitude: number): CoverageStatus {
   // A deliberately broad launch envelope for Harris, Fort Bend, and Katy.

@@ -12,7 +12,7 @@ const statuses: { key: FacilityStatus; label: string; color: string }[] = [
   { key: 'announced', label: 'Announced / planned', color: 'purple' },
 ]
 
-type LocationSuggestion = SearchedLocation & { shortLabel: string; kind: string; coverage: 'supported' | 'outside' }
+type LocationSuggestion = { latitude?: number; longitude?: number; label: string; shortLabel: string; kind: string; coverage: 'supported' | 'outside' | 'unknown'; source?: 'google' | 'openstreetmap'; precision?: SearchedLocation['precision']; placeId?: string }
 
 export default function Home() {
   const [query, setQuery] = useState('')
@@ -71,13 +71,25 @@ export default function Home() {
     setSubmittedQuery(label)
     setSuggestions([])
     setActiveSuggestion(-1)
-    setSearchMessage(location.coverage === 'outside' ? 'Location found, but it is outside current Harris + Fort Bend coverage.' : 'Location confirmed. Distances are calculated from this point.')
+    setSearchMessage(location.fallbackReason ? 'We could not find that exact address in OpenStreetMap. This is a map-data limitation, not a problem with your search. We found the surrounding locality and are using its approximate location for distances.' : location.coverage === 'outside' ? 'Location found, but it is outside current Harris + Fort Bend coverage.' : location.precision === 'municipality_boundary' || location.precision === 'zip_centroid' ? 'We found the surrounding area, not an exact address. Distances are approximate from this location.' : 'Location confirmed. Distances are calculated from this point.')
     const nearest = [...facilities].sort((a, b) => haversineMiles(location, a) - haversineMiles(location, b))[0]
     setSelected(nearest ?? null)
   }
 
-  function chooseSuggestion(suggestion: LocationSuggestion) {
-    setPendingLocation(suggestion)
+  async function chooseSuggestion(suggestion: LocationSuggestion) {
+    if (suggestion.latitude === undefined || suggestion.longitude === undefined) {
+      if (!suggestion.placeId) return
+      setSearchMessage('Confirming the selected Google place...')
+      const response = await fetch(`/api/geocode/place?placeId=${encodeURIComponent(suggestion.placeId)}`)
+      const payload = await response.json() as { result?: SearchedLocation }
+      if (!payload.result) {
+        setSearchMessage('Google could not confirm that place. Choose another suggestion or add a ZIP code.')
+        return
+      }
+      setPendingLocation(payload.result)
+    } else {
+      setPendingLocation(suggestion as SearchedLocation)
+    }
     setQuery(suggestion.label)
     setSuggestions([])
     setActiveSuggestion(-1)
@@ -120,7 +132,7 @@ export default function Home() {
     <main className="shell">
       <header className="topbar">
         <Link href="/" className="brand"><span className="brand-mark">G</span><span>GRIDLINE <i>HOUSTON</i></span></Link>
-        <nav><a href="#methodology">Methodology</a><a href="#about">About the data</a><button className="outline-button">Report a correction <span>↗</span></button></nav>
+        <nav><Link href="/open-map">Open-source map</Link><a href="#about">About the data</a><button className="outline-button">Report a correction <span>↗</span></button></nav>
       </header>
 
       <section className="hero">
