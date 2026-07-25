@@ -1,4 +1,4 @@
-# Gridline Houston
+# Data Center Impact
 
 A map-first public MVP for exploring data centers across Harris and Fort Bend counties. The current milestone is a polished, self-contained demo with five clearly labeled sample records. It is not a verified public inventory. The `35+` market figure in the UI is a changing directory estimate, not the number of records currently published here.
 

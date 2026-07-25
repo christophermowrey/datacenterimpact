@@ -138,7 +138,7 @@ export default function Home() {
   return (
     <main className="shell">
       <header className="topbar">
-        <Link href="/" className="brand"><span className="brand-mark">G</span><span>GRIDLINE <i>HOUSTON</i></span></Link>
+        <Link href="/" className="brand"><span className="brand-mark">D</span><span>DATA CENTER <i>IMPACT</i></span></Link>
         <nav><Link href="/open-map">Open-source map</Link><Link href="/learn">Learn about data centers</Link><a href="#about">About the data</a><button className="outline-button">Report a correction <span>↗</span></button></nav>
       </header>
 
@@ -160,7 +160,7 @@ export default function Home() {
         </div>
       </section>
       <section className="trust"><div><span className="trust-icon">✓</span><div><strong>Evidence, not speculation</strong><p>Every published fact is tied to a source and verification date.</p></div></div><div><span className="trust-icon">◌</span><div><strong>Inspect the evidence</strong><p>Review the facts, assumptions, and sources behind each record.</p></div></div><div><span className="trust-icon">⌁</span><div><strong>Built for homebuyers</strong><p>Clear context without predicting property values or health outcomes.</p></div></div></section>
-      <footer id="about"><span>GRIDLINE HOUSTON © 2025</span><span>Informational only · Not a substitute for due diligence</span><span id="methodology"><a href="#methodology">Scoring methodology</a> <a id="privacy" href="#privacy">Privacy</a></span></footer>
+      <footer id="about"><span>DATA CENTER IMPACT © 2026</span><span>Informational only · Not a substitute for due diligence</span><span id="methodology"><a href="#methodology">Scoring methodology</a> <a id="privacy" href="#privacy">Privacy</a></span></footer>
     </main>
   )
 }

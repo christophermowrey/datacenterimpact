@@ -26,7 +26,7 @@ Google Places Autocomplete is optional. If enabled, use a restricted server-side
 1. Open **Lightsail → Create instance**.
 2. Select Linux/Unix and **OS Only → Ubuntu 24.04 LTS**.
 3. Start with the 2 GB plan. Use 4 GB only if builds or database imports require it.
-4. Name it `gridline-houston-prod`.
+4. Name it `data-center-impact-prod`.
 5. Create the instance and wait for its state to become **Running**.
 6. Create and attach a static IP. Record it privately.
 7. In **Networking**, allow TCP ports `22`, `80`, and `443`. Do not open PostgreSQL port `5432`.
@@ -55,9 +55,9 @@ docker compose version
 Replace the URL below if the repository becomes private or is moved.
 
 ```bash
-sudo mkdir -p /opt/gridline
-sudo chown "$USER":"$USER" /opt/gridline
-cd /opt/gridline
+sudo mkdir -p /opt/data-center-impact
+sudo chown "$USER":"$USER" /opt/data-center-impact
+cd /opt/data-center-impact
 cp .env.example .env.local
 nano .env.local
 ```
@@ -92,7 +92,7 @@ Before public launch:
 ## 7. Updating the application
 
 ```bash
-cd /opt/gridline
+cd /opt/data-center-impact
 ```
 
 If a release fails, inspect the previous image before removing it. Keep the last known-good commit hash in the deployment log. Never use `git reset --hard` on the server without a documented rollback decision.

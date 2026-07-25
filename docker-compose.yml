@@ -13,15 +13,15 @@ services:
   db:
     image: postgis/postgis:16-3.4
     environment:
-      POSTGRES_DB: gridline
-      POSTGRES_USER: gridline
+      POSTGRES_DB: data_center_impact
+      POSTGRES_USER: data_center_impact
       POSTGRES_PASSWORD: change-me
     volumes:
-      - gridline-db:/var/lib/postgresql/data
+      - data-center-impact-db:/var/lib/postgresql/data
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U gridline -d gridline"]
+      test: ["CMD-SHELL", "pg_isready -U data_center_impact -d data_center_impact"]
       interval: 5s
       timeout: 5s
       retries: 10
 volumes:
-  gridline-db:
+  data-center-impact-db:

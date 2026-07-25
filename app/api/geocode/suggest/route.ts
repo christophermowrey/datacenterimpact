@@ -28,7 +28,7 @@ export async function GET(request: Request) {
   url.searchParams.set('q', query)
   const isPlaceOnlyQuery = /^[a-zA-Z .'-]+$/.test(query) && query.split(/\s+/).length <= 3
   const fetchResults = async (searchUrl: URL) => {
-    const response = await fetch(searchUrl, { headers: { 'User-Agent': 'GridlineHouston/0.1 local development' }, next: { revalidate: 300 } })
+    const response = await fetch(searchUrl, { headers: { 'User-Agent': 'DataCenterImpact/0.1 local development' }, next: { revalidate: 300 } })
     if (!response.ok) throw new Error('geocoder unavailable')
     return response.json() as Promise<NominatimResult[]>
   }

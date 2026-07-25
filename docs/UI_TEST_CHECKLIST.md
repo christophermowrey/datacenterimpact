@@ -6,9 +6,9 @@ Run this checklist in Chrome and one mobile-sized browser window after each UI c
 
 - [ ] `docker compose up -d --build` completes without errors.
 - [ ] `docker compose ps` shows `web` running and `db` healthy.
-- [ ] `http://localhost:3000` loads the Gridline Houston page.
+- [ ] `http://localhost:3000` loads the Data Center Impact page.
 - [ ] `/open-map` loads the standalone OpenStreetMap view.
-- [ ] Refreshing the page stays on Gridline Houston.
+- [ ] Refreshing the page stays on Data Center Impact.
 - [ ] `docker compose down` stops the project without affecting other Docker projects.
 
 ## Map

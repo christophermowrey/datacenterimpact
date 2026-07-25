@@ -21,7 +21,7 @@ export async function GET(request: Request) {
   const searchQuery = looksLikeAddress && !explicitState ? `${query}${query.includes(',') ? ', Texas' : ', Houston, Texas'}` : query
   url.searchParams.set('q', searchQuery)
   try {
-    const response = await fetch(url, { headers: { 'User-Agent': 'GridlineHouston/0.1 local development contact@localhost' }, next: { revalidate: 3600 } })
+    const response = await fetch(url, { headers: { 'User-Agent': 'DataCenterImpact/0.1 local development contact@localhost' }, next: { revalidate: 3600 } })
     if (!response.ok) return NextResponse.json({ error: 'The geocoding service is temporarily unavailable.' }, { status: 502 })
     const results = await response.json() as NominatimResult[]
     let result = results[0]
@@ -32,7 +32,7 @@ export async function GET(request: Request) {
       if (localityQuery) {
         const fallbackUrl = new URL(url)
         fallbackUrl.searchParams.set('q', localityQuery)
-        const fallbackResponse = await fetch(fallbackUrl, { headers: { 'User-Agent': 'GridlineHouston/0.1 local development contact@localhost' }, next: { revalidate: 3600 } })
+        const fallbackResponse = await fetch(fallbackUrl, { headers: { 'User-Agent': 'DataCenterImpact/0.1 local development contact@localhost' }, next: { revalidate: 3600 } })
         if (fallbackResponse.ok) {
           const fallbackResults = await fallbackResponse.json() as NominatimResult[]
           result = fallbackResults[0]
