@@ -137,7 +137,7 @@ export default function Home() {
     <main className="shell">
       <header className="topbar">
         <Link href="/" className="brand"><span className="brand-mark">G</span><span>GRIDLINE <i>HOUSTON</i></span></Link>
-        <nav><Link href="/open-map">Open-source map</Link><a href="#about">About the data</a><button className="outline-button">Report a correction <span>↗</span></button></nav>
+        <nav><Link href="/open-map">Open-source map</Link><Link href="/learn">Learn about data centers</Link><a href="#about">About the data</a><button className="outline-button">Report a correction <span>↗</span></button></nav>
       </header>
 
       <section className="hero">
