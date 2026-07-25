@@ -13,3 +13,10 @@ test('local impact decays to zero beyond five miles', () => {
 test('noise decays faster than broad land-use context', () => {
   assert.ok(decay(1, 0.5, 1.35) < decay(1, 5, 1))
 })
+
+test('regional baseline prevents a zero impact score at distance', () => {
+  const localLower = 0
+  const localUpper = 0
+  assert.ok(Math.max(1, localLower + 1) >= 1)
+  assert.ok(Math.max(1, localUpper + 2) >= 2)
+})

@@ -79,8 +79,7 @@ export default function Home() {
     setSuggestions([])
     setActiveSuggestion(-1)
     setSearchMessage(location.fallbackReason ? 'We could not find that exact address in OpenStreetMap. This is a map-data limitation, not a problem with your search. We found the surrounding locality and are using its approximate location for distances.' : location.coverage === 'outside' ? 'Location found, but it is outside current Harris + Fort Bend coverage.' : location.precision === 'municipality_boundary' || location.precision === 'zip_centroid' ? 'We found the surrounding area, not an exact address. Distances are approximate from this location.' : 'Location confirmed. Distances are calculated from this point.')
-    const nearest = [...facilities].sort((a, b) => haversineMiles(location, a) - haversineMiles(location, b))[0]
-    setSelected(nearest ?? null)
+    setSelected(null)
   }
 
   async function chooseSuggestion(suggestion: LocationSuggestion) {
@@ -135,6 +134,21 @@ export default function Home() {
     }
   }
 
+  function clearSearch() {
+    setSearched(false)
+    setSearchedLocation(null)
+    setPendingLocation(null)
+    setSubmittedQuery('')
+    setSearchMessage('')
+    setSuggestions([])
+    setQuery('')
+    setSelected(facilities[0] ?? null)
+  }
+
+  function selectFacility(facility: Facility) {
+    setSelected((current) => current?.slug === facility.slug ? null : facility)
+  }
+
   return (
     <main className="shell">
       <header className="topbar">
@@ -153,10 +167,10 @@ export default function Home() {
           <div className="control-row"><div className="filter-label">SHOWING <span>{visible.length} places</span></div><div className="status-filters"><button className={activeStatus === 'all' ? 'active' : ''} onClick={() => setActiveStatus('all')}>All</button>{statuses.map((status) => <button key={status.key} className={activeStatus === status.key ? 'active' : ''} onClick={() => setActiveStatus(status.key)}><b className={`dot ${status.color}`} />{status.label}</button>)}</div><label className="toggle"><input type="checkbox" checked={showAdditional} onChange={(e) => setShowAdditional(e.target.checked)} /><span className="switch" /> Additional compute</label></div>
         </div>
 
-        {(searched || pendingLocation) && <div className="search-note"><span>⌖</span> <strong>{searchMessage}</strong> <button onClick={() => { setSearched(false); setSearchedLocation(null); setPendingLocation(null); setSubmittedQuery(''); setSearchMessage(''); setSuggestions([]); setQuery('') }}>Clear</button></div>}
+        {(searched || pendingLocation) && <div className="search-note"><span>⌖</span> <strong>{searchMessage}</strong> <button onClick={clearSearch}>Clear search</button></div>}
         <div className="map-layout">
-          <MapView facilities={visible} selected={selected} onSelect={setSelected} searchedLocation={searchedLocation} />
-           <aside className="results"><div className="results-head"><div><p className="eyebrow">NEARBY FACILITIES</p><h2>{searchedLocation?.coverage === 'outside' ? 'Outside launch area' : searched ? 'Around your search' : 'Greater Houston'}</h2></div><span className="sort-label">{searchedLocation ? 'Nearest first' : 'Houston area'}</span></div><div className="result-list">{visible.map((facility) => <button className={`result ${selected?.slug === facility.slug ? 'chosen' : ''}`} key={facility.slug} onClick={() => setSelected(facility)}><div className="result-top"><span className={`status-pill ${facility.color}`}>{facility.statusLabel}</span><span>{facility.distanceLabel ?? 'Select a location'}</span></div><h3>{facility.name}</h3><p>{facility.city} · {facility.classLabel}</p><div className="result-bottom"><span className="score">{facility.score[0]}–{facility.score[1]} <small>facility range</small></span><span className="confidence">{facility.confidence}</span></div></button>)}{visible.length === 0 && <div className="empty">{searchedLocation ? 'Sorry, we do not currently have a published facility record near this location. The inventory is incomplete.' : 'No facilities match those filters.'}</div>}</div><div className="results-foot">Last verified <strong>12 Jun 2025</strong><span>·</span><button>About our sources <span>↗</span></button></div></aside>
+          <MapView facilities={visible} selected={selected} onSelect={selectFacility} searchedLocation={searchedLocation} />
+           <aside className="results"><div className="results-head"><div><p className="eyebrow">NEARBY FACILITIES</p><h2>{searchedLocation?.coverage === 'outside' ? 'Outside launch area' : searched ? 'Around your search' : 'Greater Houston'}</h2></div><span className="sort-label">{searchedLocation ? 'Nearest first' : 'Houston area'}</span></div><div className="result-list">{visible.map((facility) => <button className={`result ${selected?.slug === facility.slug ? 'chosen' : ''}`} key={facility.slug} onClick={() => selectFacility(facility)}><div className="result-top"><span className={`status-pill ${facility.color}`}>{facility.statusLabel}</span><span>{facility.distanceLabel ?? 'Select a location'}</span></div><h3>{facility.name}</h3><p>{facility.city} · {facility.classLabel}</p><div className="result-bottom"><span className="score">{facility.score[0]}–{facility.score[1]} <small>{searchedLocation ? 'at searched location' : 'immediate neighborhood'}</small></span><span className="confidence">{facility.confidence}</span></div></button>)}{visible.length === 0 && <div className="empty">{searchedLocation ? 'Sorry, we do not currently have a published facility record near this location. The inventory is incomplete.' : 'No facilities match those filters.'}</div>}</div><div className="results-foot">Last verified <strong>12 Jun 2025</strong><span>·</span><button>About our sources <span>↗</span></button></div></aside>
         </div>
       </section>
       <section className="trust"><div><span className="trust-icon">✓</span><div><strong>Evidence, not speculation</strong><p>Every published fact is tied to a source and verification date.</p></div></div><div><span className="trust-icon">◌</span><div><strong>Inspect the evidence</strong><p>Review the facts, assumptions, and sources behind each record.</p></div></div><div><span className="trust-icon">⌁</span><div><strong>Built for homebuyers</strong><p>Clear context without predicting property values or health outcomes.</p></div></div></section>
