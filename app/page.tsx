@@ -50,7 +50,7 @@ export default function Home() {
       }
     }, 280)
     return () => { controller.abort(); window.clearTimeout(timer) }
-  }, [query, searchedLocation])
+  }, [query])
 
   const filtered = facilities.filter((facility) =>
     (facility.publicationStatus === 'published' || facility.publicationStatus === 'demo') &&
@@ -62,6 +62,11 @@ export default function Home() {
     const miles = searchedLocation ? haversineMiles(searchedLocation, facility) : undefined
     return { ...facility, distanceMiles: miles, distanceLabel: miles === undefined ? undefined : `${formatMiles(miles)} mi` }
   }).sort((a, b) => (a.distanceMiles ?? Number.POSITIVE_INFINITY) - (b.distanceMiles ?? Number.POSITIVE_INFINITY))
+
+  const visibleSlugs = visible.map((facility) => facility.slug).join('|')
+  useEffect(() => {
+    if (selected && !visible.some((facility) => facility.slug === selected.slug)) setSelected(visible[0] ?? null)
+  }, [selected, visibleSlugs])
 
   function useLocation(location: SearchedLocation, label: string) {
     setSearchedLocation(location)
@@ -117,7 +122,7 @@ export default function Home() {
       } else {
         setSearchedLocation(null)
         setSubmittedQuery(value)
-        setSearchMessage(payload.error ?? 'No address found. Showing matching facility names instead.')
+        setSearchMessage(payload.error ?? (/[0-9]/.test(value) ? 'We could not identify a city or ZIP code for that address. Add the city and state or ZIP code, then search again.' : 'We could not identify a map location. If you meant a facility name, matching facility records are shown below.'))
       }
       setSearched(true)
     } catch {
@@ -149,7 +154,7 @@ export default function Home() {
         {(searched || pendingLocation) && <div className="search-note"><span>⌖</span> <strong>{searchMessage}</strong> <button onClick={() => { setSearched(false); setSearchedLocation(null); setPendingLocation(null); setSubmittedQuery(''); setSearchMessage(''); setSuggestions([]); setQuery('') }}>Clear</button></div>}
         <div className="map-layout">
           <MapView facilities={visible} selected={selected} onSelect={setSelected} searchedLocation={searchedLocation} />
-          <aside className="results"><div className="results-head"><div><p className="eyebrow">NEARBY FACILITIES</p><h2>{searchedLocation?.coverage === 'outside' ? 'Outside launch area' : searched ? 'Around your search' : 'Greater Houston'}</h2></div><span className="sort-label">{searchedLocation ? 'Nearest first' : 'Houston area'}</span></div><div className="result-list">{visible.map((facility) => <button className={`result ${selected?.slug === facility.slug ? 'chosen' : ''}`} key={facility.slug} onClick={() => setSelected(facility)}><div className="result-top"><span className={`status-pill ${facility.color}`}>{facility.statusLabel}</span><span>{facility.distanceLabel ?? 'Select a location'}</span></div><h3>{facility.name}</h3><p>{facility.city} · {facility.classLabel}</p><div className="result-bottom"><span className="score">{facility.score[0]}–{facility.score[1]} <small>impact</small></span><span className="confidence">{facility.confidence}</span></div></button>)}{visible.length === 0 && <div className="empty">No facilities match those filters.</div>}</div><div className="results-foot">Last verified <strong>12 Jun 2025</strong><span>·</span><button>About our sources <span>↗</span></button></div></aside>
+           <aside className="results"><div className="results-head"><div><p className="eyebrow">NEARBY FACILITIES</p><h2>{searchedLocation?.coverage === 'outside' ? 'Outside launch area' : searched ? 'Around your search' : 'Greater Houston'}</h2></div><span className="sort-label">{searchedLocation ? 'Nearest first' : 'Houston area'}</span></div><div className="result-list">{visible.map((facility) => <button className={`result ${selected?.slug === facility.slug ? 'chosen' : ''}`} key={facility.slug} onClick={() => setSelected(facility)}><div className="result-top"><span className={`status-pill ${facility.color}`}>{facility.statusLabel}</span><span>{facility.distanceLabel ?? 'Select a location'}</span></div><h3>{facility.name}</h3><p>{facility.city} · {facility.classLabel}</p><div className="result-bottom"><span className="score">{facility.score[0]}–{facility.score[1]} <small>facility range</small></span><span className="confidence">{facility.confidence}</span></div></button>)}{visible.length === 0 && <div className="empty">{searchedLocation ? 'Sorry, we do not currently have a published facility record near this location. The inventory is incomplete.' : 'No facilities match those filters.'}</div>}</div><div className="results-foot">Last verified <strong>12 Jun 2025</strong><span>·</span><button>About our sources <span>↗</span></button></div></aside>
         </div>
       </section>
       <section className="trust"><div><span className="trust-icon">✓</span><div><strong>Evidence, not speculation</strong><p>Every published fact is tied to a source and verification date.</p></div></div><div><span className="trust-icon">◌</span><div><strong>Inspect the evidence</strong><p>Review the facts, assumptions, and sources behind each record.</p></div></div><div><span className="trust-icon">⌁</span><div><strong>Built for homebuyers</strong><p>Clear context without predicting property values or health outcomes.</p></div></div></section>

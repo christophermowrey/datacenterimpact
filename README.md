@@ -25,6 +25,8 @@ Open `http://localhost:3000`. Stop it with `Ctrl+C`, or use `docker compose down
 
 Other commands: `npm run build`, `npm start`, and `npm test`.
 
+Local health check: `http://localhost:3000/api/health`.
+
 ## Product boundaries
 
 - Sample facilities are intentionally labeled demo data and must be replaced by reviewed records before launch.
