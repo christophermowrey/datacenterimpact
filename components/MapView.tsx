@@ -46,6 +46,10 @@ export default function MapView({ facilities, selected, onSelect, searchedLocati
   }, [searchedLocation])
 
   useEffect(() => {
+    if (ready && selected && mapRef.current) mapRef.current.flyTo({ center: [selected.longitude, selected.latitude], duration: 700 })
+  }, [ready, selected])
+
+  useEffect(() => {
     if (!ready || !mapRef.current) return
     let active = true
     import('maplibre-gl').then((maplibregl) => {
@@ -57,7 +61,7 @@ export default function MapView({ facilities, selected, onSelect, searchedLocati
         element.className = `map-pin ${facility.status} ${selected?.slug === facility.slug ? 'selected' : ''}`
         element.setAttribute('aria-label', `Select ${facility.name}`)
         element.innerHTML = `<span>${facility.status === 'operational' ? '●' : facility.status === 'construction' ? '◆' : '○'}</span>`
-        element.addEventListener('click', () => onSelect(facility))
+        element.addEventListener('click', () => { onSelect(facility); mapRef.current?.flyTo({ center: [facility.longitude, facility.latitude], zoom: Math.max(mapRef.current.getZoom(), 12), duration: 700 }) })
         return new maplibregl.Marker({ element, anchor: 'center' }).setLngLat([facility.longitude, facility.latitude]).addTo(mapRef.current!)
       })
     })

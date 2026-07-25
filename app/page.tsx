@@ -21,6 +21,8 @@ export default function Home() {
   const [selected, setSelected] = useState<Facility | null>(facilities[0])
   const [searched, setSearched] = useState(false)
   const [searchedLocation, setSearchedLocation] = useState<SearchedLocation | null>(null)
+  const [pendingLocation, setPendingLocation] = useState<SearchedLocation | null>(null)
+  const [submittedQuery, setSubmittedQuery] = useState('')
   const [searchMessage, setSearchMessage] = useState('')
   const [suggestions, setSuggestions] = useState<LocationSuggestion[]>([])
   const [suggesting, setSuggesting] = useState(false)
@@ -28,7 +30,7 @@ export default function Home() {
 
   useEffect(() => {
     const value = query.trim()
-    if (value.length < 3 || searchedLocation) {
+    if (value.length < 3) {
       setSuggestions([])
       setSuggesting(false)
       return
@@ -54,7 +56,7 @@ export default function Home() {
     (facility.publicationStatus === 'published' || facility.publicationStatus === 'demo') &&
     (activeStatus === 'all' || facility.status === activeStatus) &&
     (showAdditional || facility.class !== 'additional') &&
-    (!query || searchedLocation || `${facility.name} ${facility.city} ${facility.county}`.toLowerCase().includes(query.toLowerCase())),
+    (!submittedQuery || searchedLocation || `${facility.name} ${facility.city} ${facility.county}`.toLowerCase().includes(submittedQuery.toLowerCase())),
   )
   const visible = filtered.map((facility) => {
     const miles = searchedLocation ? haversineMiles(searchedLocation, facility) : undefined
@@ -63,8 +65,10 @@ export default function Home() {
 
   function useLocation(location: SearchedLocation, label: string) {
     setSearchedLocation(location)
+    setPendingLocation(null)
     setSearched(true)
     setQuery(label)
+    setSubmittedQuery(label)
     setSuggestions([])
     setActiveSuggestion(-1)
     setSearchMessage(location.coverage === 'outside' ? 'Location found, but it is outside current Harris + Fort Bend coverage.' : 'Location confirmed. Distances are calculated from this point.')
@@ -73,13 +77,21 @@ export default function Home() {
   }
 
   function chooseSuggestion(suggestion: LocationSuggestion) {
-    useLocation(suggestion, suggestion.label)
+    setPendingLocation(suggestion)
+    setQuery(suggestion.label)
+    setSuggestions([])
+    setActiveSuggestion(-1)
+    setSearchMessage('Location selected. Press Search to update the map and nearby facilities.')
   }
 
   async function search(event: React.FormEvent) {
     event.preventDefault()
     const value = query.trim()
     if (!value) return
+    if (pendingLocation) {
+      useLocation(pendingLocation, pendingLocation.label)
+      return
+    }
     if (suggestions.length > 0) {
       setSearchMessage('Choose a location from the suggestions so the address is not misidentified.')
       return
@@ -92,10 +104,13 @@ export default function Home() {
         useLocation(payload.result, payload.result.label)
       } else {
         setSearchedLocation(null)
+        setSubmittedQuery(value)
         setSearchMessage(payload.error ?? 'No address found. Showing matching facility names instead.')
       }
       setSearched(true)
     } catch {
+      setSearchedLocation(null)
+      setSubmittedQuery(value)
       setSearchMessage('Location search is unavailable. Try a facility name or ZIP code.')
       setSearched(true)
     }
@@ -115,11 +130,11 @@ export default function Home() {
 
       <section className="workspace">
         <div className="controls">
-          <form className="search" onSubmit={search}><span className="search-icon">⌕</span><div className="search-entry"><input value={query} onChange={(e) => { setQuery(e.target.value); setSearchedLocation(null); setSearched(false); setSearchMessage('') }} onKeyDown={(event) => { if (event.key === 'ArrowDown') { event.preventDefault(); setActiveSuggestion((current) => Math.min(current + 1, suggestions.length - 1)) } else if (event.key === 'ArrowUp') { event.preventDefault(); setActiveSuggestion((current) => Math.max(current - 1, 0)) } else if (event.key === 'Escape') { setSuggestions([]) } else if (event.key === 'Enter' && activeSuggestion >= 0) { event.preventDefault(); chooseSuggestion(suggestions[activeSuggestion]) } }} placeholder="Search an address, neighborhood, or ZIP" aria-label="Search location" role="combobox" aria-expanded={suggestions.length > 0} aria-controls="location-suggestions" aria-autocomplete="list" />{(suggesting || suggestions.length > 0) && <div className="suggestions" id="location-suggestions" role="listbox"><div className="suggestion-hint">Texas results shown first · choose a location</div>{suggestions.map((suggestion, index) => <button type="button" role="option" aria-selected={activeSuggestion === index} className={activeSuggestion === index ? 'active' : ''} key={`${suggestion.latitude}-${suggestion.longitude}-${index}`} onMouseDown={(event) => event.preventDefault()} onClick={() => chooseSuggestion(suggestion)}><span className="suggestion-icon">⌖</span><span><strong>{suggestion.shortLabel || suggestion.label}</strong><small>{suggestion.label}</small></span>{suggestion.coverage === 'outside' && <em>Outside launch area</em>}</button>)}</div>}</div><button type="submit">Search</button></form>
+          <form className="search" onSubmit={search}><span className="search-icon">⌕</span><div className="search-entry"><input value={query} onChange={(e) => { setQuery(e.target.value); setPendingLocation(null) }} onKeyDown={(event) => { if (event.key === 'ArrowDown') { event.preventDefault(); setActiveSuggestion((current) => Math.min(current + 1, suggestions.length - 1)) } else if (event.key === 'ArrowUp') { event.preventDefault(); setActiveSuggestion((current) => Math.max(current - 1, 0)) } else if (event.key === 'Escape') { setSuggestions([]) } else if (event.key === 'Enter' && activeSuggestion >= 0) { event.preventDefault(); chooseSuggestion(suggestions[activeSuggestion]) } }} placeholder="Search an address, neighborhood, or ZIP" aria-label="Search location" role="combobox" aria-expanded={suggestions.length > 0} aria-controls="location-suggestions" aria-autocomplete="list" />{(suggesting || suggestions.length > 0) && <div className="suggestions" id="location-suggestions" role="listbox"><div className="suggestion-hint">Texas results shown first · choose a location</div>{suggestions.map((suggestion, index) => <button type="button" role="option" aria-selected={activeSuggestion === index} className={activeSuggestion === index ? 'active' : ''} key={`${suggestion.latitude}-${suggestion.longitude}-${index}`} onMouseDown={(event) => event.preventDefault()} onClick={() => chooseSuggestion(suggestion)}><span className="suggestion-icon">⌖</span><span><strong>{suggestion.shortLabel || suggestion.label}</strong><small>{suggestion.label}</small></span>{suggestion.coverage === 'outside' && <em>Outside launch area</em>}</button>)}</div>}</div><button type="submit">Search</button></form>
           <div className="control-row"><div className="filter-label">SHOWING <span>{visible.length} places</span></div><div className="status-filters"><button className={activeStatus === 'all' ? 'active' : ''} onClick={() => setActiveStatus('all')}>All</button>{statuses.map((status) => <button key={status.key} className={activeStatus === status.key ? 'active' : ''} onClick={() => setActiveStatus(status.key)}><b className={`dot ${status.color}`} />{status.label}</button>)}</div><label className="toggle"><input type="checkbox" checked={showAdditional} onChange={(e) => setShowAdditional(e.target.checked)} /><span className="switch" /> Additional compute</label></div>
         </div>
 
-        {searched && <div className="search-note"><span>⌖</span> <strong>{searchMessage}</strong> <button onClick={() => { setSearched(false); setSearchedLocation(null); setSearchMessage(''); setSuggestions([]); setQuery('') }}>Clear</button></div>}
+        {(searched || pendingLocation) && <div className="search-note"><span>⌖</span> <strong>{searchMessage}</strong> <button onClick={() => { setSearched(false); setSearchedLocation(null); setPendingLocation(null); setSubmittedQuery(''); setSearchMessage(''); setSuggestions([]); setQuery('') }}>Clear</button></div>}
         <div className="map-layout">
           <MapView facilities={visible} selected={selected} onSelect={setSelected} searchedLocation={searchedLocation} />
           <aside className="results"><div className="results-head"><div><p className="eyebrow">NEARBY FACILITIES</p><h2>{searchedLocation?.coverage === 'outside' ? 'Outside launch area' : searched ? 'Around your search' : 'Greater Houston'}</h2></div><span className="sort-label">{searchedLocation ? 'Nearest first' : 'Houston area'}</span></div><div className="result-list">{visible.map((facility) => <button className={`result ${selected?.slug === facility.slug ? 'chosen' : ''}`} key={facility.slug} onClick={() => setSelected(facility)}><div className="result-top"><span className={`status-pill ${facility.color}`}>{facility.statusLabel}</span><span>{facility.distanceLabel ?? 'Select a location'}</span></div><h3>{facility.name}</h3><p>{facility.city} · {facility.classLabel}</p><div className="result-bottom"><span className="score">{facility.score[0]}–{facility.score[1]} <small>impact</small></span><span className="confidence">{facility.confidence}</span></div></button>)}{visible.length === 0 && <div className="empty">No facilities match those filters.</div>}</div><div className="results-foot">Last verified <strong>12 Jun 2025</strong><span>·</span><button>About our sources <span>↗</span></button></div></aside>
