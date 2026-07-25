@@ -10,7 +10,7 @@ type MapViewProps = { facilities: Facility[]; selected: Facility | null; onSelec
 export default function MapView({ facilities, selected, onSelect, searchedLocation }: MapViewProps) {
   const mapElement = useRef<HTMLDivElement>(null)
   const mapRef = useRef<import('maplibre-gl').Map | null>(null)
-  const markersRef = useRef<import('maplibre-gl').Marker[]>([])
+  const markersRef = useRef(new Map<string, { marker: import('maplibre-gl').Marker; element: HTMLButtonElement }>())
   const searchedMarkerRef = useRef<import('maplibre-gl').Marker | null>(null)
   const [ready, setReady] = useState(false)
 
@@ -38,7 +38,7 @@ export default function MapView({ facilities, selected, onSelect, searchedLocati
       setReady(true)
     }
     createMap()
-    return () => { disposed = true; mapRef.current?.remove(); mapRef.current = null }
+    return () => { disposed = true; markersRef.current.clear(); mapRef.current?.remove(); mapRef.current = null }
   }, [])
 
   useEffect(() => {
@@ -54,15 +54,29 @@ export default function MapView({ facilities, selected, onSelect, searchedLocati
     let active = true
     import('maplibre-gl').then((maplibregl) => {
       if (!active || !mapRef.current) return
-      markersRef.current.forEach((marker) => marker.remove())
-      markersRef.current = facilities.map((facility) => {
+      const visibleSlugs = new Set(facilities.map((facility) => facility.slug))
+      markersRef.current.forEach(({ marker }, slug) => {
+        if (!visibleSlugs.has(slug)) {
+          marker.remove()
+          markersRef.current.delete(slug)
+        }
+      })
+      facilities.forEach((facility) => {
+        const existing = markersRef.current.get(facility.slug)
+        if (existing) {
+          existing.element.className = `map-pin ${facility.status} ${selected?.slug === facility.slug ? 'selected' : ''}`
+          existing.marker.setLngLat([facility.longitude, facility.latitude])
+          return
+        }
         const element = document.createElement('button')
         element.type = 'button'
         element.className = `map-pin ${facility.status} ${selected?.slug === facility.slug ? 'selected' : ''}`
         element.setAttribute('aria-label', `Select ${facility.name}`)
         element.innerHTML = `<span>${facility.status === 'operational' ? '●' : facility.status === 'construction' ? '◆' : '○'}</span>`
         element.addEventListener('click', () => { onSelect(facility); mapRef.current?.flyTo({ center: [facility.longitude, facility.latitude], zoom: Math.max(mapRef.current.getZoom(), 12), duration: 700 }) })
-        return new maplibregl.Marker({ element, anchor: 'center' }).setLngLat([facility.longitude, facility.latitude]).addTo(mapRef.current!)
+        const marker = new maplibregl.Marker({ element: Object.assign(document.createElement('div'), { className: 'map-marker' }), anchor: 'center' }).setLngLat([facility.longitude, facility.latitude]).addTo(mapRef.current!)
+        marker.getElement().appendChild(element)
+        markersRef.current.set(facility.slug, { marker, element })
       })
     })
     return () => { active = false }
