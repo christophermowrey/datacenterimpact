@@ -29,7 +29,7 @@ Run this checklist in Chrome and one mobile-sized browser window after each UI c
 ## Filters and search
 
 - [ ] All, Built, Under construction, and Announced filters update both map pins and results.
-- [ ] Smaller carrier and network facilities are shown by default and can be toggled off.
+- [ ] Smaller carrier and network facilities are hidden by default and can be toggled on.
 - [ ] Searching `Houston`, `Katy`, or a facility name updates the visible records.
 - [ ] Typing `Pasadena` shows Pasadena, Texas first plus out-of-state alternatives.
 - [ ] Selecting a suggestion confirms the full location before changing the map.
@@ -46,6 +46,7 @@ Run this checklist in Chrome and one mobile-sized browser window after each UI c
 - [ ] Clicking a selected facility again deselects its map card.
 - [ ] Deselecting a facility after an address search returns the map focus to the searched address.
 - [ ] A no-match search displays a useful empty state.
+- [ ] Report a correction opens the public correction form without exposing private address data.
 
 ## Facility details
 

@@ -1,0 +1,34 @@
+name: Facility correction
+description: Report a factual error or missing source on a facility profile.
+labels:
+  - correction
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Please do not include a private home address or other sensitive personal information.
+  - type: input
+    id: page
+    attributes:
+      label: Facility page URL
+      description: Paste the Data Center Impact page that needs review.
+      placeholder: https://datacenterimpact.app/data-centers/...
+    validations:
+      required: true
+  - type: textarea
+    id: correction
+    attributes:
+      label: What should be corrected?
+      description: Identify the specific field, statement, location, or status that is incorrect.
+    validations:
+      required: true
+  - type: input
+    id: source
+    attributes:
+      label: Supporting source URL
+      description: Link to an official record, permit, operator page, government source, or reputable reporting.
+  - type: textarea
+    id: notes
+    attributes:
+      label: Additional context
+      description: Include dates, conflicting records, or other details that help review the correction.

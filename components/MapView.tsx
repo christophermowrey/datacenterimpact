@@ -25,7 +25,7 @@ export default function MapView({ facilities, selected, onSelect, searchedLocati
         layers: [{ id: 'osm', type: 'raster' as const, source: 'osm' }],
       }
       const configuredStyle = process.env.NEXT_PUBLIC_MAP_STYLE_URL?.trim()
-      const useOsmFallback = process.env.NEXT_PUBLIC_USE_OSM_FALLBACK !== 'false'
+      const useOsmFallback = process.env.NEXT_PUBLIC_USE_OSM_FALLBACK === 'true'
       const style = configuredStyle || (useOsmFallback ? osmFallbackStyle : { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#eef2ed' } }] })
       const map = new maplibregl.Map({
         container: mapElement.current,

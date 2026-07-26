@@ -11,6 +11,7 @@ export async function GET(request: Request) {
   if (!rate.allowed) return NextResponse.json({ error: 'Too many location searches. Try again shortly.' }, { status: 429, headers: { 'Retry-After': rate.retryAfter.toString() } })
   const query = new URL(request.url).searchParams.get('q')?.trim()
   if (!query || query.length < 3 || query.length > 200) return NextResponse.json({ error: 'Enter a location between 3 and 200 characters.' }, { status: 400 })
+  if ((process.env.GEOCODER_PROVIDER || 'nominatim').toLowerCase() !== 'nominatim') return NextResponse.json({ error: 'The configured geocoder is not supported by this deployment.' }, { status: 503 })
 
   const url = new URL('https://nominatim.openstreetmap.org/search')
   url.searchParams.set('format', 'jsonv2')

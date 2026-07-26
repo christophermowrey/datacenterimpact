@@ -21,6 +21,7 @@ export async function GET(request: Request) {
   if (!rate.allowed) return NextResponse.json({ suggestions: [], error: 'Too many suggestions requests. Try again shortly.' }, { status: 429, headers: { 'Retry-After': rate.retryAfter.toString() } })
   const query = new URL(request.url).searchParams.get('q')?.trim()
   if (!query || query.length < 3 || query.length > 200) return NextResponse.json({ suggestions: [] })
+  if ((process.env.GEOCODER_PROVIDER || 'nominatim').toLowerCase() !== 'nominatim') return NextResponse.json({ suggestions: [], error: 'The configured geocoder is not supported by this deployment.' }, { status: 503 })
   const url = new URL('https://nominatim.openstreetmap.org/search')
   url.searchParams.set('format', 'jsonv2')
   url.searchParams.set('addressdetails', '1')
