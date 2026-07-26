@@ -4,9 +4,9 @@ services:
     ports:
       - "127.0.0.1:3000:3000"
     environment:
-      GEOCODER_PROVIDER: mock
-      NEXT_PUBLIC_MAP_STYLE_URL: ""
-      GOOGLE_MAPS_API_KEY: ""
+      GEOCODER_PROVIDER: ${GEOCODER_PROVIDER:-mock}
+      NEXT_PUBLIC_MAP_STYLE_URL: ${NEXT_PUBLIC_MAP_STYLE_URL:-}
+      GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-}
     depends_on:
       db:
         condition: service_healthy
@@ -15,7 +15,7 @@ services:
     environment:
       POSTGRES_DB: data_center_impact
       POSTGRES_USER: data_center_impact
-      POSTGRES_PASSWORD: change-me
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?Set POSTGRES_PASSWORD in .env.local or the shell environment}
     volumes:
       - data-center-impact-db:/var/lib/postgresql/data
     healthcheck:
@@ -23,5 +23,24 @@ services:
       interval: 5s
       timeout: 5s
       retries: 10
+  caddy:
+    image: caddy:2.10-alpine
+    profiles: ["production"]
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      DOMAIN: ${DOMAIN:-datacenterimpact.app}
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      web:
+        condition: service_started
 volumes:
   data-center-impact-db:
+
+  caddy-data:
+
+  caddy-config:

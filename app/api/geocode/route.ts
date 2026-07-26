@@ -1,11 +1,14 @@
 import { NextResponse } from 'next/server'
 import { getCoverageStatus } from '@/lib/geo'
+import { requestRateLimit } from '@/lib/rate-limit'
 
 type NominatimResult = { lat: string; lon: string; display_name: string; addresstype?: string }
 
 const precisionFor = (result: NominatimResult) => result.addresstype === 'postcode' ? 'zip_centroid' : result.addresstype === 'city' || result.addresstype === 'town' || result.addresstype === 'village' || result.addresstype === 'suburb' || result.addresstype === 'locality' ? 'municipality_boundary' : result.addresstype === 'road' ? 'place_label' : 'exact_address'
 
 export async function GET(request: Request) {
+  const rate = requestRateLimit(request, 'geocode', 30)
+  if (!rate.allowed) return NextResponse.json({ error: 'Too many location searches. Try again shortly.' }, { status: 429, headers: { 'Retry-After': rate.retryAfter.toString() } })
   const query = new URL(request.url).searchParams.get('q')?.trim()
   if (!query || query.length < 3 || query.length > 200) return NextResponse.json({ error: 'Enter a location between 3 and 200 characters.' }, { status: 400 })
 
@@ -21,7 +24,7 @@ export async function GET(request: Request) {
    const searchQuery = looksLikeAddress && !explicitState ? `${query}, Texas` : query
   url.searchParams.set('q', searchQuery)
   try {
-    const response = await fetch(url, { headers: { 'User-Agent': 'DataCenterImpact/0.1 local development contact@localhost' }, next: { revalidate: 3600 } })
+      const response = await fetch(url, { headers: { 'User-Agent': 'DataCenterImpact/0.1 local development contact@localhost' }, signal: AbortSignal.timeout(8000), next: { revalidate: 3600 } })
     if (!response.ok) return NextResponse.json({ error: 'The geocoding service is temporarily unavailable.' }, { status: 502 })
     const results = await response.json() as NominatimResult[]
     let result = results[0]
@@ -32,7 +35,7 @@ export async function GET(request: Request) {
       if (localityQuery) {
         const fallbackUrl = new URL(url)
         fallbackUrl.searchParams.set('q', localityQuery)
-        const fallbackResponse = await fetch(fallbackUrl, { headers: { 'User-Agent': 'DataCenterImpact/0.1 local development contact@localhost' }, next: { revalidate: 3600 } })
+        const fallbackResponse = await fetch(fallbackUrl, { headers: { 'User-Agent': 'DataCenterImpact/0.1 local development contact@localhost' }, signal: AbortSignal.timeout(8000), next: { revalidate: 3600 } })
         if (fallbackResponse.ok) {
           const fallbackResults = await fallbackResponse.json() as NominatimResult[]
           result = fallbackResults[0]

@@ -1,0 +1,7 @@
+{$DOMAIN:datacenterimpact.app} {
+    encode gzip zstd
+    reverse_proxy web:3000
+    header {
+        -Server
+    }
+}

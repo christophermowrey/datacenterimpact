@@ -5,6 +5,11 @@ export type ImpactCategory = 'proximity' | 'electricity' | 'generation' | 'water
 export type ImpactComponent = { category: ImpactCategory; lower: number; upper: number; decay: number; weight: number; rationale: string }
 export type ImpactResult = { lower: number; upper: number; midpoint: number; label: string; components: ImpactComponent[]; regionalEffects: string[] }
 
+export function impactTone(lower: number, upper: number) {
+  const midpoint = (lower + upper) / 2
+  return midpoint < 20 ? 'minimal' : midpoint < 40 ? 'low' : midpoint < 60 ? 'moderate' : midpoint < 80 ? 'high' : 'very-high'
+}
+
 function band(score: number) {
   return score < 20 ? 'Minimal' : score < 40 ? 'Low' : score < 60 ? 'Moderate' : score < 80 ? 'High' : 'Very high'
 }

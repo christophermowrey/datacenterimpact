@@ -8,6 +8,8 @@ Run this checklist in Chrome and one mobile-sized browser window after each UI c
 - [ ] `docker compose ps` shows `web` running and `db` healthy.
 - [ ] `http://localhost:3000` loads the Data Center Impact page.
 - [ ] `/open-map` loads the standalone OpenStreetMap view.
+- [ ] `/about` explains coverage, sources, scoring, and limitations.
+- [ ] `/privacy` explains that search storage is disabled by default.
 - [ ] Refreshing the page stays on Data Center Impact.
 - [ ] `docker compose down` stops the project without affecting other Docker projects.
 
@@ -20,6 +22,8 @@ Run this checklist in Chrome and one mobile-sized browser window after each UI c
 - [ ] Zoom buttons change the map scale and remain bounded.
 - [ ] Browser location requests permission only after the location button is clicked.
 - [ ] Clicking a facility pin selects the matching result and card.
+- [ ] The map legend identifies Built, Under construction, Announced, and the searched address.
+- [ ] Facility pins remain easy to select at the default zoom and are visibly larger than the searched-address pin.
 - [ ] Map card links open the matching facility detail page.
 
 ## Filters and search
@@ -35,17 +39,19 @@ Run this checklist in Chrome and one mobile-sized browser window after each UI c
 - [ ] An unresolved exact address with a recognizable city explains that the map provider lacked the street address and offers the city-area fallback.
 - [ ] An unresolved search with no recognizable city tells the user to add a city, state, or ZIP code.
 - [ ] Search feedback appears after submit.
+- [ ] The search action is labeled Address Impact.
 - [ ] Clear removes the search state.
 - [ ] Successful address search scrolls to the map and leaves the searched-location pin visually clear.
 - [ ] Searching does not auto-select the nearest facility.
 - [ ] Clicking a selected facility again deselects its map card.
+- [ ] Deselecting a facility after an address search returns the map focus to the searched address.
 - [ ] A no-match search displays a useful empty state.
 
 ## Facility details
 
 - [ ] Facility detail page loads from a map card link.
 - [ ] Unknown facility slugs display the not-found page.
-- [ ] Status, class, confidence, score range, verification date, timeline, and disclaimer are visible.
+- [ ] Status, class, Community Impact score range with `/100`, evidence quality, verification date, timeline, and limitations are visible.
 - [ ] Listed power shows an approximate Texas-home equivalent and identifies capacity versus actual consumption.
 - [ ] Back to map returns to the home page.
 

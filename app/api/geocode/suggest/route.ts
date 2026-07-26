@@ -1,5 +1,6 @@
 import { NextResponse } from 'next/server'
 import { getCoverageStatus } from '@/lib/geo'
+import { requestRateLimit } from '@/lib/rate-limit'
 
 type NominatimResult = { lat: string; lon: string; display_name: string; type?: string; addresstype?: string; address?: { city?: string; town?: string; village?: string; state?: string; postcode?: string } }
 
@@ -12,10 +13,12 @@ function googleSuggestions(query: string) {
   url.searchParams.set('location', '29.7604,-95.3698')
   url.searchParams.set('radius', '180000')
   url.searchParams.set('key', key)
-  return fetch(url, { next: { revalidate: 300 } }).then((response) => response.json() as Promise<{ status: string; predictions?: { place_id: string; description: string; structured_formatting?: { main_text: string } }[] }>)
+  return fetch(url, { signal: AbortSignal.timeout(8000), next: { revalidate: 300 } }).then((response) => response.json() as Promise<{ status: string; predictions?: { place_id: string; description: string; structured_formatting?: { main_text: string } }[] }>)
 }
 
 export async function GET(request: Request) {
+  const rate = requestRateLimit(request, 'suggest', 60)
+  if (!rate.allowed) return NextResponse.json({ suggestions: [], error: 'Too many suggestions requests. Try again shortly.' }, { status: 429, headers: { 'Retry-After': rate.retryAfter.toString() } })
   const query = new URL(request.url).searchParams.get('q')?.trim()
   if (!query || query.length < 3 || query.length > 200) return NextResponse.json({ suggestions: [] })
   const url = new URL('https://nominatim.openstreetmap.org/search')
@@ -28,7 +31,7 @@ export async function GET(request: Request) {
   url.searchParams.set('q', query)
   const isPlaceOnlyQuery = /^[a-zA-Z .'-]+$/.test(query) && query.split(/\s+/).length <= 3
   const fetchResults = async (searchUrl: URL) => {
-    const response = await fetch(searchUrl, { headers: { 'User-Agent': 'DataCenterImpact/0.1 local development' }, next: { revalidate: 300 } })
+    const response = await fetch(searchUrl, { headers: { 'User-Agent': 'DataCenterImpact/0.1 local development' }, signal: AbortSignal.timeout(8000), next: { revalidate: 300 } })
     if (!response.ok) throw new Error('geocoder unavailable')
     return response.json() as Promise<NominatimResult[]>
   }

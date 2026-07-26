@@ -42,12 +42,10 @@ export default function MapView({ facilities, selected, onSelect, searchedLocati
   }, [])
 
   useEffect(() => {
-    if (searchedLocation && mapRef.current) mapRef.current.flyTo({ center: [searchedLocation.longitude, searchedLocation.latitude], zoom: 13, duration: 900 })
-  }, [searchedLocation])
-
-  useEffect(() => {
-    if (ready && selected && mapRef.current) mapRef.current.flyTo({ center: [selected.longitude, selected.latitude], duration: 700 })
-  }, [ready, selected])
+    if (!ready || !mapRef.current) return
+    if (selected) mapRef.current.flyTo({ center: [selected.longitude, selected.latitude], duration: 700 })
+    else if (searchedLocation) mapRef.current.flyTo({ center: [searchedLocation.longitude, searchedLocation.latitude], zoom: 13, duration: 700 })
+  }, [ready, selected, searchedLocation])
 
   useEffect(() => {
     if (!ready || !mapRef.current) return
@@ -93,5 +91,5 @@ export default function MapView({ facilities, selected, onSelect, searchedLocati
     return () => { searchedMarkerRef.current?.remove() }
   }, [searchedLocation, ready])
 
-  return <div className="map" aria-label="Interactive map of Greater Houston data centers" role="application"><div ref={mapElement} className="maplibre-canvas" />{searchedLocation && <div className="searched-location" aria-label={`Searched location: ${searchedLocation.label}`}><span>⌖</span><strong>Searched location</strong><small>{searchedLocation.label}</small></div>}{selected && <div className="map-card"><div className="card-kicker"><span className={`dot ${selected.color}`} />{selected.statusLabel}<span className="card-distance">{selected.distanceLabel ?? 'Distance pending'}</span></div><h3>{selected.name}</h3><p>{selected.city}, {selected.county} County · {selected.classLabel}</p><div className="card-footer"><span className="confidence">{selected.confidence} confidence</span><Link href={`/data-centers/${selected.slug}`}>View full details <span>→</span></Link></div></div>}</div>
+  return <div className="map" aria-label="Interactive map of Houston-area data centers" role="application"><div ref={mapElement} className="maplibre-canvas" /><div className="map-legend" aria-label="Map legend"><strong>Map key</strong><span><i className="legend-marker built">●</i> Built</span><span><i className="legend-marker construction">◆</i> Under construction</span><span><i className="legend-marker announced">○</i> Announced</span><span><i className="legend-marker searched">●</i> Address</span></div>{searchedLocation && <div className="searched-location" aria-label={`Searched location: ${searchedLocation.label}`}><span>⌖</span><strong>Address Impact</strong><small>{searchedLocation.label}</small></div>}{selected && <div className="map-card"><div className="card-kicker"><span className={`dot ${selected.color}`} />{selected.status === 'operational' ? 'Built' : selected.statusLabel}<span className="card-distance">{selected.distanceLabel ?? 'Distance pending'}</span></div><h3>{selected.name}</h3><p>{selected.city}, {selected.county} County · {selected.classLabel}</p><div className="card-footer"><Link href={`/data-centers/${selected.slug}`}>View full details <span>→</span></Link></div></div>}</div>
 }
