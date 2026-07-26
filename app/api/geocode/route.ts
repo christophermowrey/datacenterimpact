@@ -18,7 +18,7 @@ export async function GET(request: Request) {
   url.searchParams.set('bounded', '0')
   const explicitState = /\b(texas|tx|california|ca|florida|fl|new york|ny|maryland|md|minnesota|mn)\b/i.test(query)
   const looksLikeAddress = /\d/.test(query)
-  const searchQuery = looksLikeAddress && !explicitState ? `${query}${query.includes(',') ? ', Texas' : ', Houston, Texas'}` : query
+   const searchQuery = looksLikeAddress && !explicitState ? `${query}, Texas` : query
   url.searchParams.set('q', searchQuery)
   try {
     const response = await fetch(url, { headers: { 'User-Agent': 'DataCenterImpact/0.1 local development contact@localhost' }, next: { revalidate: 3600 } })

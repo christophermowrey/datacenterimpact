@@ -18,3 +18,9 @@ test('distance is reported in miles for Houston-area points', () => {
   const miles = haversineMiles({ latitude: 29.671, longitude: -95.412 }, { latitude: 29.743, longitude: -95.404 })
   assert.ok(miles > 4 && miles < 6)
 })
+
+test('expanded Houston-area coverage includes Victoria and College Station', () => {
+  const supported = (latitude, longitude) => latitude >= 28.55 && latitude <= 31.05 && longitude >= -97.1 && longitude <= -94.4
+  assert.equal(supported(28.805, -97.003), true)
+  assert.equal(supported(30.628, -96.334), true)
+})

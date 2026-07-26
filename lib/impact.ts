@@ -1,4 +1,5 @@
 import type { Facility } from '@/lib/facilities'
+import { parsePowerKw, powerSummary, SIGNIFICANT_HOME_THRESHOLD } from '@/lib/power'
 
 export type ImpactCategory = 'proximity' | 'electricity' | 'generation' | 'water' | 'noise' | 'traffic' | 'landUse'
 export type ImpactComponent = { category: ImpactCategory; lower: number; upper: number; decay: number; weight: number; rationale: string }
@@ -22,7 +23,12 @@ export function calculateImpact(facility: Facility, distanceMiles: number): Impa
     const decay = distanceDecay(distanceMiles, category)
     return { category, lower: values[0] * weights[category] * decay, upper: values[1] * weights[category] * decay, decay, weight: weights[category], rationale: category === 'generation' && values[1] > values[0] + 0.3 ? 'Upper bound includes conservative backup-generation proxy.' : 'Distance-decayed local contribution.' }
   })
-  const lower = Math.max(regionalElectricityBaseline.lower, Math.round(components.reduce((total, component) => total + component.lower, 0) + regionalElectricityBaseline.lower))
-  const upper = Math.min(100, Math.max(lower, Math.round(components.reduce((total, component) => total + component.upper, 0) + regionalElectricityBaseline.upper)))
-  return { lower, upper, midpoint: Math.round((lower + upper) / 2), label: upper >= 80 ? 'Very high' : upper >= 60 ? 'High' : upper >= 40 ? 'Moderate' : 'Low', components, regionalEffects: ['Minimal regional electricity baseline included: Houston facilities draw from an interconnected ERCOT system and local transmission/distribution network, even when a searched address is more than five miles away.', 'Electricity rates, regional water availability, and utility expansion are tracked separately and are not distance-decayed parcel impacts.'] }
+  const powerMetric = facility.metrics?.find((metric) => /power|load|capacity/i.test(`${metric.label} ${metric.value}`))
+  const powerKw = powerMetric ? parsePowerKw(powerMetric.value) : null
+  const power = powerKw ? powerSummary(powerKw) : null
+  const hasSignificantPower = power ? power.homes >= SIGNIFICANT_HOME_THRESHOLD : true
+  const baseline = hasSignificantPower ? regionalElectricityBaseline : { lower: 1, upper: 1 }
+  const lower = Math.max(baseline.lower, Math.round(components.reduce((total, component) => total + component.lower, 0) + baseline.lower))
+  const upper = Math.min(100, Math.max(lower, Math.round(components.reduce((total, component) => total + component.upper, 0) + baseline.upper)))
+  return { lower, upper, midpoint: Math.round((lower + upper) / 2), label: upper >= 80 ? 'Very high' : upper >= 60 ? 'High' : upper >= 40 ? 'Moderate' : 'Low', components, regionalEffects: [`Minimal regional electricity baseline included: Houston facilities draw from an interconnected ERCOT system and local transmission/distribution network, even when a searched address is more than five miles away. Facilities above ${SIGNIFICANT_HOME_THRESHOLD} homes equivalent start at one point before local distance effects are considered.`, 'Electricity rates, regional water availability, and utility expansion are tracked separately and are not distance-decayed parcel impacts.'] }
 }

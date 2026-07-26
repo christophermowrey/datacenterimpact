@@ -1,8 +1,8 @@
 export type CoverageStatus = 'supported' | 'outside' | 'unknown'
 
 export function getCoverageStatus(latitude: number, longitude: number): CoverageStatus {
-  // A deliberately broad launch envelope for Harris, Fort Bend, and Katy.
-  return latitude >= 29.25 && latitude <= 30.25 && longitude >= -96.2 && longitude <= -94.95 ? 'supported' : 'outside'
+  // Houston-area coverage includes the named surrounding cities and regional locations.
+  return latitude >= 28.55 && latitude <= 31.05 && longitude >= -97.1 && longitude <= -94.4 ? 'supported' : 'outside'
 }
 
 export function haversineMiles(from: { latitude: number; longitude: number }, to: { latitude: number; longitude: number }) {

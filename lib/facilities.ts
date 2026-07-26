@@ -1,6 +1,6 @@
 export type FacilityStatus = 'operational' | 'construction' | 'announced'
 export type PublicationStatus = 'published' | 'candidate' | 'demo' | 'archived' | 'excluded'
-export type FacilitySource = { title: string; publisher: string; url: string; accessed: string; supports: string }
+export type FacilitySource = { title: string; publisher: string; url: string; accessed: string; supports: string; snapshot?: string; contentHash?: string; archived?: boolean }
 export type FacilityMilestone = { date: string; title: string; description: string; source?: string }
 export type Facility = { slug: string; name: string; aliases?: string[]; officialWebsite?: { label: string; url: string }; publicationStatus: PublicationStatus; status: FacilityStatus; statusLabel: string; color: string; class: string; classLabel: string; city: string; county: string; address?: string; locationPrecision: 'exact' | 'approximate' | 'candidate'; distance?: string; distanceMiles?: number; distanceLabel?: string; score: [number, number]; confidence: string; latitude: number; longitude: number; summary: string; operator: string; verified: string; impactProfile?: Partial<Record<'proximity' | 'electricity' | 'generation' | 'water' | 'noise' | 'traffic' | 'landUse', [number, number]>>; metrics?: { label: string; value: string; note?: string }[]; milestones?: FacilityMilestone[]; unknowns?: string[]; sources: FacilitySource[] }
 export const facilities: Facility[] = [

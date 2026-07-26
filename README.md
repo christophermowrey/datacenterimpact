@@ -1,6 +1,6 @@
 # Data Center Impact
 
-A map-first public MVP for exploring data centers across Harris and Fort Bend counties. The current milestone is a polished, self-contained demo with five clearly labeled sample records. It is not a verified public inventory. The `35+` market figure in the UI is a changing directory estimate, not the number of records currently published here.
+A map-first public MVP for checking whether AI and other data centers may affect a home across the Houston area. The current milestone is a self-contained demo with source-backed and clearly labeled records. It is not yet a complete verified public inventory. Houston-area coverage is expanding to surrounding cities and regional locations.
 
 ## Run locally
 

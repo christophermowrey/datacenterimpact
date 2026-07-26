@@ -10,7 +10,7 @@ Each local category uses a bounded decay curve:
 decay(distance) = 1 / (1 + (distance / characteristic_distance)^power)
 ```
 
-Local parcel contributions become zero beyond five miles. Scores do not become zero: every result includes a minimal 1-2 point regional electricity baseline. The model uses different characteristic distances because effects do not travel in the same way:
+Local parcel contributions become zero beyond five miles. Scores do not become zero: every result includes a minimal regional electricity baseline. A facility with listed power equivalent to more than 100 Texas homes starts at one electricity point before local distance effects are considered. The model uses different characteristic distances because effects do not travel in the same way:
 
 - Noise: fast decay, reflecting point-source sound behavior and barriers that must be measured for a real site.
 - Air and backup generation: moderate decay proxy; weather, stack height, wind, operation, and terrain can dominate actual concentration.
