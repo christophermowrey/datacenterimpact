@@ -77,10 +77,14 @@ DOMAIN=datacenterimpact.app
 GEOCODER_PROVIDER=production-provider
 GEOCODER_API_KEY=replace-with-server-side-key
 GOOGLE_MAPS_API_KEY=replace-with-restricted-server-side-key
+NEXT_PUBLIC_MAP_STYLE_URL=https://tiles.stadiamaps.com/styles/alidade_smooth.json
+NEXT_PUBLIC_USE_OSM_FALLBACK=false
 STORE_SEARCHES=false
 ```
 
 The application currently remains in no-storage mode. Do not set `STORE_SEARCHES=true` until the privacy, retention, access, encryption, and deletion controls are implemented and reviewed.
+
+The project is currently noncommercial. Configure Stadia domain-based authentication for `datacenterimpact.app` and keep Stadia/OpenMapTiles/OpenStreetMap attribution visible. If the project becomes commercial, upgrade the Stadia plan or obtain another commercial arrangement before continuing public use.
 
 ## 5. Run an internal smoke test
 
@@ -123,11 +127,12 @@ Do not announce the site publicly until these checks pass:
 2. PostgreSQL is not reachable from the internet.
 3. `POSTGRES_PASSWORD` is not present in Git or image layers.
 4. A production geocoder and compliant production map-tile provider are configured.
-5. Rate limiting is working on geocoder endpoints.
-6. Search storage is disabled unless the privacy controls are complete.
-7. Demo records are clearly labeled or replaced with reviewed inventory.
-8. Dependency audit results are reviewed.
-9. The correction/admin workflow is protected before accepting private submissions.
+5. `NEXT_PUBLIC_USE_OSM_FALLBACK=false` is set in the live environment.
+6. Rate limiting is working on geocoder endpoints.
+7. Search storage is disabled unless the privacy controls are complete.
+8. Demo records are clearly labeled or replaced with reviewed inventory.
+9. Dependency audit results are reviewed.
+10. The correction/admin workflow is protected before accepting private submissions.
 
 The initial UI does not yet use the database. Do not treat the PostGIS container as production-ready until migrations, seed imports, restricted lead storage, and admin authentication exist.
 

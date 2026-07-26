@@ -19,21 +19,26 @@ export default function MapView({ facilities, selected, onSelect, searchedLocati
     async function createMap() {
       const maplibregl = await import('maplibre-gl')
       if (disposed || !mapElement.current) return
+      const osmFallbackStyle = {
+        version: 8 as const,
+        sources: { osm: { type: 'raster' as const, tiles: [process.env.NEXT_PUBLIC_OSM_TILE_URL || 'https://tile.openstreetmap.org/{z}/{x}/{y}.png'], tileSize: 256, attribution: '© OpenStreetMap contributors' } },
+        layers: [{ id: 'osm', type: 'raster' as const, source: 'osm' }],
+      }
+      const configuredStyle = process.env.NEXT_PUBLIC_MAP_STYLE_URL?.trim()
+      const useOsmFallback = process.env.NEXT_PUBLIC_USE_OSM_FALLBACK !== 'false'
+      const style = configuredStyle || (useOsmFallback ? osmFallbackStyle : { version: 8 as const, sources: {}, layers: [{ id: 'background', type: 'background' as const, paint: { 'background-color': '#eef2ed' } }] })
       const map = new maplibregl.Map({
         container: mapElement.current,
         center: [-95.55, 29.78],
         zoom: 9.2,
         minZoom: 7,
         maxZoom: 16,
-        style: {
-          version: 8,
-          sources: { osm: { type: 'raster', tiles: ['https://tile.openstreetmap.org/{z}/{x}/{y}.png'], tileSize: 256, attribution: '© OpenStreetMap contributors' } },
-          layers: [{ id: 'osm', type: 'raster', source: 'osm' }],
-        },
+        style,
         cooperativeGestures: false,
       })
       map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right')
       map.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: false }), 'top-right')
+      map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right')
       mapRef.current = map
       setReady(true)
     }

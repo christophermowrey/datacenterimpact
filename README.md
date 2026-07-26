@@ -1,6 +1,6 @@
 # Data Center Impact
 
-A map-first public MVP for checking whether AI and other data centers may affect a home across the Houston area. The current milestone is a self-contained demo with source-backed and clearly labeled records. It is not yet a complete verified public inventory. Houston-area coverage is expanding to surrounding cities and regional locations.
+A noncommercial, map-first public project for checking whether AI and other data centers may affect a home across the Houston area. The current milestone is a self-contained demo with source-backed and clearly labeled records. It is not yet a complete verified public inventory. Houston-area coverage is expanding to surrounding cities and regional locations.
 
 ## Run locally
 
@@ -40,7 +40,7 @@ Local health check: `http://localhost:3000/api/health`.
 
 ## Public deployment status
 
-The repository includes PolyForm licensing, contributor ownership terms, security headers, endpoint rate limiting, Caddy HTTPS scaffolding, and an AWS beginner runbook. Before public AWS deployment, use a single Docker host (Lightsail 2 GB target), keep provider credentials server-side, configure cost alerts, complete the production tile-provider choice, and add encrypted nightly PostgreSQL dumps to separate S3 storage with a tested restore procedure.
+The repository includes PolyForm licensing, contributor ownership terms, security headers, endpoint rate limiting, Caddy HTTPS scaffolding, separate developer/live deployment modes, and an AWS beginner runbook. The project is currently noncommercial and uses Stadia’s noncommercial terms while that remains true. Before public AWS deployment, use a single Docker host (Lightsail 2 GB target), keep provider credentials server-side, configure cost alerts, complete Stadia domain authentication, and add encrypted nightly PostgreSQL dumps to separate S3 storage with a tested restore procedure.
 
 ## Environment
 

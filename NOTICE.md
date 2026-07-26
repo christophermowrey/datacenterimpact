@@ -12,6 +12,8 @@ Third-party packages retain their own licenses. Review `package-lock.json` and t
 
 Local map rendering uses MapLibre GL JS and OpenStreetMap data/tiles. OpenStreetMap attribution must remain visible. The public OpenStreetMap tile service is for development only; production must use a compliant provider with its own terms.
 
+The project is currently noncommercial. The planned production provider is Stadia Maps under its applicable noncommercial plan and terms. Stadia Maps, OpenMapTiles, and OpenStreetMap attribution must remain visible when Stadia data is used.
+
 ## Facility information
 
 Facility names, addresses, metrics, descriptions, and source extracts come from the cited external sources. They are not automatically licensed under the application code license. Preserve source attribution and follow each source's terms before redistributing bulk data or archived content.
