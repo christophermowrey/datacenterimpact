@@ -12,7 +12,7 @@ curl -fsSL https://raw.githubusercontent.com/christophermowrey/datacenterimpact/
 
 The script installs Docker, clones the repository into `/opt/data-center-impact`, generates a random PostgreSQL password at `/etc/data-center-impact/app.env`, installs the deployment script, and starts the staging stack.
 
-The script expects the staging hostname `staging.datacenterimpact.app` and the Stadia style URL. Configure the DNS record before relying on Caddy HTTPS:
+The script expects the staging hostname `staging.datacenterimpact.app`, the Stadia style URL, and enables preliminary candidate records for staging review. Configure the DNS record before relying on Caddy HTTPS:
 
 ```text
 Type: A

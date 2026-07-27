@@ -31,9 +31,13 @@ GEOCODER_PROVIDER=nominatim
 NEXT_PUBLIC_MAP_STYLE_URL=https://tiles.stadiamaps.com/styles/alidade_smooth.json
 NEXT_PUBLIC_USE_OSM_FALLBACK=false
 NEXT_PUBLIC_OSM_TILE_URL=https://tile.openstreetmap.org/{z}/{x}/{y}.png
+NEXT_PUBLIC_SHOW_CANDIDATES=true
 GOOGLE_MAPS_API_KEY=
 EOF
   sudo chmod 0600 "$env_file"
+fi
+if ! sudo grep -q '^NEXT_PUBLIC_SHOW_CANDIDATES=' "$env_file"; then
+  echo 'NEXT_PUBLIC_SHOW_CANDIDATES=true' | sudo tee -a "$env_file" >/dev/null
 fi
 
 sudo /usr/local/sbin/data-center-impact-deploy

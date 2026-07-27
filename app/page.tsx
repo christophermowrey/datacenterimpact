@@ -19,7 +19,7 @@ type LocationSuggestion = { latitude?: number; longitude?: number; label: string
 export default function Home() {
   const [query, setQuery] = useState('')
   const [activeStatus, setActiveStatus] = useState<FacilityStatus | 'all'>('all')
-  const [showAdditional, setShowAdditional] = useState(false)
+  const [showAdditional, setShowAdditional] = useState(true)
   const [selected, setSelected] = useState<Facility | null>(facilities[0])
   const [searched, setSearched] = useState(false)
   const [searchedLocation, setSearchedLocation] = useState<SearchedLocation | null>(null)
@@ -41,7 +41,8 @@ export default function Home() {
     return () => { controller.abort(); window.clearTimeout(timer) }
   }, [query])
 
-  const filtered = facilities.filter((facility) => (facility.publicationStatus === 'published' || facility.publicationStatus === 'demo') && (activeStatus === 'all' || facility.status === activeStatus) && (showAdditional || facility.class !== 'additional') && (!submittedQuery || searchedLocation || `${facility.name} ${facility.city} ${facility.county}`.toLowerCase().includes(submittedQuery.toLowerCase())))
+  const showCandidates = process.env.NEXT_PUBLIC_SHOW_CANDIDATES === 'true'
+  const filtered = facilities.filter((facility) => (facility.publicationStatus === 'published' || facility.publicationStatus === 'demo' || (showCandidates && facility.publicationStatus === 'candidate')) && (activeStatus === 'all' || facility.status === activeStatus) && (showAdditional || facility.class !== 'additional') && (!submittedQuery || searchedLocation || `${facility.name} ${facility.city} ${facility.county}`.toLowerCase().includes(submittedQuery.toLowerCase())))
   const visible = filtered.map((facility) => { const miles = searchedLocation ? haversineMiles(searchedLocation, facility) : undefined; const impact = miles === undefined ? null : calculateImpact(facility, miles); const score = impact ? [impact.lower, impact.upper] as [number, number] : facility.score; return { ...facility, distanceMiles: miles, distanceLabel: miles === undefined ? undefined : `${formatMiles(miles)} mi`, score, impactLabel: impact?.label ?? 'Immediate neighborhood', impactTone: impactTone(score[0], score[1]) } }).sort((a, b) => (a.distanceMiles ?? Number.POSITIVE_INFINITY) - (b.distanceMiles ?? Number.POSITIVE_INFINITY))
   const visibleSlugs = visible.map((facility) => facility.slug).join('|')
   useEffect(() => { if (selected && !visible.some((facility) => facility.slug === selected.slug)) setSelected(visible[0] ?? null) }, [selected, visibleSlugs])
