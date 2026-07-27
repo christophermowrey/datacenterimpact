@@ -39,6 +39,10 @@
   display: none;
 }
 
+.scroll-score {
+  display: none;
+}
+
 .controls::after {
   content: 'Impact score: beta. Open a facility profile for the current screening range and breakdown.';
   display: block;
