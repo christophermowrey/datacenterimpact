@@ -1,7 +1,7 @@
 import type { Facility } from '@/lib/facilities'
 import { parsePowerKw, powerSummary, SIGNIFICANT_HOME_THRESHOLD } from '@/lib/power'
 
-export type ImpactCategory = 'proximity' | 'electricity' | 'generation' | 'water' | 'noise' | 'traffic' | 'landUse'
+export type ImpactCategory = 'electricity' | 'generation' | 'water' | 'noise' | 'vibration' | 'landUse' | 'scale'
 export type ImpactComponent = { category: ImpactCategory; lower: number; upper: number; decay: number; weight: number; rationale: string }
 export type ImpactResult = { lower: number; upper: number; midpoint: number; label: string; components: ImpactComponent[]; regionalEffects: string[] }
 
@@ -14,23 +14,25 @@ function band(score: number) {
   return score < 20 ? 'Minimal' : score < 40 ? 'Low' : score < 60 ? 'Moderate' : score < 80 ? 'High' : 'Very high'
 }
 
-const weights: Record<ImpactCategory, number> = { proximity: 20, electricity: 20, generation: 15, water: 15, noise: 15, traffic: 5, landUse: 5 }
-const decayMiles: Record<ImpactCategory, number> = { proximity: 5, electricity: 5, generation: 2, water: 5, noise: 0.5, traffic: 2, landUse: 5 }
-const decayPower: Record<ImpactCategory, number> = { proximity: 0.8, electricity: 0.6, generation: 1.1, water: 0.35, noise: 1.35, traffic: 1, landUse: 1 }
+export const impactWeights: Record<ImpactCategory, number> = { water: 25, electricity: 20, generation: 20, noise: 15, vibration: 10, landUse: 5, scale: 5 }
+const decayMiles: Record<ImpactCategory, number> = { water: 5, electricity: 5, generation: 2, noise: 0.5, vibration: 0.25, landUse: 5, scale: 5 }
+const decayPower: Record<ImpactCategory, number> = { water: 0.35, electricity: 0.6, generation: 1.1, noise: 1.35, vibration: 2, landUse: 1, scale: 1 }
+const regionalFloor: Partial<Record<ImpactCategory, number>> = { water: 0.7, electricity: 0.8 }
 const regionalElectricityBaseline = { lower: 1, upper: 2 }
 
 function distanceDecay(distanceMiles: number, category: ImpactCategory) {
-  if (distanceMiles > 5) return 0
   const ratio = Math.max(distanceMiles, 0) / decayMiles[category]
-  return 1 / (1 + ratio ** decayPower[category])
+  const local = 1 / (1 + ratio ** decayPower[category])
+  const floor = regionalFloor[category] ?? 0
+  return floor + (1 - floor) * local
 }
 
 export function calculateImpact(facility: Facility, distanceMiles: number): ImpactResult {
   const profile = facility.impactProfile ?? {}
-  const components = (Object.keys(weights) as ImpactCategory[]).map((category) => {
-    const values = profile[category] ?? [0.15, 0.55]
+  const components = (Object.keys(impactWeights) as ImpactCategory[]).map((category) => {
+    const values = category === 'scale' ? profile.scale ?? profile.proximity ?? [0.15, 0.55] : category === 'vibration' ? profile.vibration ?? [0.05, 0.3] : profile[category] ?? [0.15, 0.55]
     const decay = distanceDecay(distanceMiles, category)
-    return { category, lower: values[0] * weights[category] * decay, upper: values[1] * weights[category] * decay, decay, weight: weights[category], rationale: category === 'generation' && values[1] > values[0] + 0.3 ? 'Upper bound includes conservative backup-generation proxy.' : 'Distance-decayed local contribution.' }
+    return { category, lower: values[0] * impactWeights[category] * decay, upper: values[1] * impactWeights[category] * decay, decay, weight: impactWeights[category], rationale: category === 'generation' && values[1] > values[0] + 0.3 ? 'Upper bound includes conservative backup-generation proxy.' : 'Category-specific distance factor.' }
   })
   const powerMetric = facility.metrics?.find((metric) => /power|load|capacity/i.test(`${metric.label} ${metric.value}`))
   const powerKw = powerMetric ? parsePowerKw(powerMetric.value) : null
@@ -41,5 +43,5 @@ export function calculateImpact(facility: Facility, distanceMiles: number): Impa
   const upper = Math.min(100, Math.max(lower, Math.round(components.reduce((total, component) => total + component.upper, 0) + baseline.upper)))
   const lowerBand = band(lower)
   const upperBand = band(upper)
-  return { lower, upper, midpoint: Math.round((lower + upper) / 2), label: lowerBand === upperBand ? lowerBand : `${lowerBand} to ${upperBand}`, components, regionalEffects: [`Minimal regional electricity baseline included: Houston facilities draw from an interconnected ERCOT system and local transmission/distribution network, even when a searched address is more than five miles away. Facilities above ${SIGNIFICANT_HOME_THRESHOLD} homes equivalent start at one point before local distance effects are considered.`, 'Electricity rates, regional water availability, and utility expansion are tracked separately and are not distance-decayed parcel impacts.'] }
+    return { lower, upper, midpoint: Math.round((lower + upper) / 2), label: lowerBand === upperBand ? lowerBand : `${lowerBand} to ${upperBand}`, components, regionalEffects: [`Electricity and water retain regional floors because grid planning, utility capacity, watersheds, and rate effects do not disappear at a five-mile boundary. Facilities above ${SIGNIFICANT_HOME_THRESHOLD} homes equivalent start at one electricity point before local effects are considered.`, 'Air uses a screening dispersion proxy, while sound and vibration use faster physical attenuation. These are not substitutes for EPA air modeling, acoustic studies, or engineering measurements.'] }
 }

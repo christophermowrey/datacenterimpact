@@ -162,20 +162,19 @@ The product should organize potential impacts into understandable categories and
 
 Display a Neighborhood Impact Score Range from 0-100 for the searched address and for each nearby facility. The lower bound reflects supported or conservative known facts; the upper bound includes reasonable proxies for important missing inputs. Higher values mean greater potential neighborhood impact. Always show the range, its midpoint only as a secondary visual aid, and the Evidence Confidence rating.
 
-| **Score component**                    | **Initial weight** | **Examples of inputs**                                                                                                                                 |
+| **Score component**                    | **Current weight** | **Examples of inputs**                                                                                                                                 |
 |----------------------------------------|--------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------|
-| Proximity and scale                    | 20                 | Distance to site boundary or point; facility class; campus acreage; building area; reported or estimated MW; number of phases.                         |
+| Facility scale and site context        | 5                  | Facility class; campus acreage; building area; reported or estimated MW; number of phases. Distance modifies each category and is not scored separately. |
 | Electricity and grid infrastructure    | 20                 | Reported/estimated load, substations, transmission upgrades, interconnection evidence, and dedicated generation.                                       |
-| On-site generation and air emissions   | 15                 | Fuel type, generator/turbine count and capacity, permits, testing schedule, modeled or permitted pollutants.                                           |
-| Water and cooling                      | 15                 | Cooling method, water source, reported/estimated withdrawal or consumption, wastewater, drought sensitivity.                                           |
-| Noise and vibration                    | 15                 | Cooling equipment, generators, transformers, construction, setbacks, barriers, studies, complaints, or measurements.                                   |
-| Construction and traffic               | 5                  | Construction duration, truck traffic, road work, workforce parking, and phase overlap.                                                                 |
-| Environmental and land-use sensitivity | 5                  | Proximity to homes, schools, flood/drainage constraints, wetlands, environmental-justice indicators, zoning compatibility.                             |
-| Project status and uncertainty buffer  | 5                  | Announced or under-construction projects may receive a forward-looking uncertainty adjustment; missing high-impact facts cannot lower risk by default. |
+| On-site generation and air emissions   | 20                 | Fuel type, generator/turbine count and capacity, permits, testing schedule, modeled or permitted pollutants.                                           |
+| Water and cooling                      | 25                 | Cooling method, water source, reported/estimated withdrawal or consumption, wastewater, drought sensitivity.                                           |
+| Noise                                  | 15                 | Cooling equipment, generators, transformers, setbacks, barriers, studies, complaints, or measurements.                                                |
+| Vibration                              | 10                 | Generators, transformers, construction, setbacks, engineering studies, complaints, or measurements.                                                    |
+| Land and wildlife sensitivity          | 5                  | Campus footprint, flood/drainage constraints, wetlands, wildlife, and environmental-justice indicators.                                                |
 
 - Suggested interpretation bands apply to both ends of the range: 0-19 Minimal, 20-39 Low, 40-59 Moderate, 60-79 High, and 80-100 Very High. A result spanning bands should be labeled accordingly, for example “Moderate to High.”
 
-- Calculate address-specific contributions from every included data center within five miles and combine them with a capped cumulative formula. Data-center parcel impacts are zero beyond five miles. Two regional exceptions are tracked separately and may extend beyond five miles: (1) utility-system effects, including electricity or water rates and resource availability; and (2) dedicated transmission, generation, water, or pipeline projects tied to data-center demand. These regional effects must not be disguised as ordinary distance-based parcel impacts.
+- Calculate address-specific contributions from every included data center. Water and electricity retain regional floors beyond five miles; air, sound, vibration, land, and scale use category-specific attenuation. These regional effects must not be disguised as ordinary parcel-distance impacts.
 
 - Use exact parcel-boundary distance when available. When only a point or approximate area is known, disclose the geometry precision and reduce Evidence Confidence.
 

@@ -37,6 +37,18 @@ Local health check: `http://localhost:3000/api/health`.
 - The map uses MapLibre and OpenStreetMap raster tiles for local development. Production map-tile provider configuration remains the final launch gate and must use a compliant, configurable OSM-derived provider rather than relying on the public OSM tile server.
 - The open-source map is also available at `/open-map`.
 - The score range is designed to remain transparent and versioned; it is not a property-value, health, or legal prediction.
+- Distance is not itself an impact category. It changes each category differently: water and electricity retain regional effects, air uses an atmospheric-dispersion screening proxy, and sound/vibration attenuate more quickly. The formulas and literature links are documented in `docs/IMPACT_METHODOLOGY.md`.
+
+## Community data reporting
+
+Every facility profile uses the same community-facing metric categories: electricity and grid, water consumption, air pollution and generation, sound, vibration, construction and traffic, and land/flood context. A metric is never silently omitted. It is reported as one of the following:
+
+- **Reported:** a facility-specific value published by an identified source.
+- **Estimated:** a reproducible calculation from reported facility inputs.
+- **Proxy:** a numerical benchmark or range based on comparable equipment or facilities, explicitly not a measurement of that site.
+- **Not publicly disclosed:** no defensible facility-specific value was found during review.
+
+Metric evidence is available from the information icon on each metric card. Technical specifications such as redundancy, cooling design, carrier count, and rack density remain available below the community summary but are not substituted for community metrics. Preliminary staging candidates may contribute to a preliminary Community Impact range; production publication requires a separate review decision.
 
 ## Public deployment status
 

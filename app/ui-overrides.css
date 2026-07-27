@@ -21,6 +21,31 @@
   scrollbar-gutter: stable;
 }
 
+.result-list-wrap {
+  position: relative;
+  min-height: 0;
+  flex: 1;
+  overflow: hidden;
+}
+
+.result-scroll-cue {
+  position: absolute;
+  right: 22px;
+  bottom: 16px;
+  border: 1px solid #a7c1b5;
+  background: rgba(255, 255, 255, .96);
+  color: var(--teal);
+  padding: 8px 10px;
+  font: 10px 'DM Sans';
+  cursor: pointer;
+  box-shadow: 0 3px 10px #526e6426;
+}
+
+.result-scroll-cue span {
+  font-size: 14px;
+  margin-left: 5px;
+}
+
 .status-filters:before {
   content: 'FILTER';
   align-self: center;
@@ -30,25 +55,192 @@
   margin-right: 2px;
 }
 
-.dot.red,
-.status-pill.red {
+.dot.green,
+.status-pill.green,
+.map-card .dot.green,
+.status-filters button .dot.green {
   background: #bd3030;
   color: #fff;
 }
 
+.dot.red,
+.status-pill.red,
+.map-card .dot.red,
 .status-filters button .dot.red {
-  background: #bd3030;
+  background: var(--orange);
+  color: #fff;
+}
+
+.map .map-pin.operational {
+  color: #bd3030;
 }
 
 .map .map-pin.construction {
-  color: #bd3030;
+  color: var(--orange);
 }
 
 .legend-marker.construction {
+  color: var(--orange);
+}
+
+.legend-marker.built {
   color: #bd3030;
 }
 
+.address-marker {
+  width: 34px;
+  height: 42px;
+  display: grid;
+  place-items: start center;
+  color: #2f855a;
+  filter: drop-shadow(0 1px 2px #fff);
+}
+
+.address-marker-icon {
+  color: #2f855a;
+  font: 700 34px/1 Georgia, serif;
+  text-shadow: 0 1px 2px #fff;
+}
+
+.searched-location {
+  border-left-color: #2f855a;
+}
+
+.searched-location .address-marker-icon,
+.search-note > span,
+.suggestion-icon {
+  color: #2f855a;
+}
+
+.search-note > span,
+.suggestion-icon {
+  font-size: 18px;
+  line-height: 1;
+}
+
+.control-row {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: flex-start;
+}
+
+.status-filters {
+  justify-content: flex-end;
+}
+
+.control-row > .status-filters,
+.control-row > .toggle {
+  grid-column: 2;
+  justify-self: end;
+}
+
+.control-row > .toggle {
+  margin-top: 0;
+}
+
+.community-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 300px;
+  gap: 24px;
+  align-items: start;
+}
+
+.community-metrics-section {
+  border-top: 1px solid var(--line);
+  padding-top: 26px;
+}
+
+.community-metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.community-metric {
+  position: relative;
+  min-height: 142px;
+  border: 1px solid var(--line);
+  background: #f5f8f4;
+  padding: 15px;
+}
+
+.community-metric small {
+  display: block;
+  color: var(--teal);
+  font: 9px 'DM Mono';
+  letter-spacing: .5px;
+}
+
+.community-metric strong {
+  display: block;
+  margin-top: 13px;
+  font-size: 15px;
+  line-height: 1.3;
+}
+
+.metric-note {
+  display: block;
+  margin-top: 9px;
+  color: var(--muted);
+  font-size: 10px;
+  line-height: 1.35;
+}
+
+.metric-basis-wrap {
+  position: absolute;
+  top: 11px;
+  right: 11px;
+}
+
+.metric-basis {
+  width: 18px;
+  height: 18px;
+  border: 1px solid #9bb5aa;
+  border-radius: 50%;
+  background: #eef5f0;
+  color: var(--teal);
+  cursor: help;
+  font: 600 11px Georgia;
+  padding: 0;
+}
+
+.metric-tooltip {
+  position: absolute;
+  z-index: 20;
+  right: 0;
+  top: 24px;
+  width: 220px;
+  padding: 9px 11px;
+  background: var(--ink);
+  color: #fff;
+  font-size: 11px;
+  line-height: 1.35;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.metric-basis:hover + .metric-tooltip,
+.metric-basis:focus + .metric-tooltip {
+  opacity: 1;
+  visibility: visible;
+}
+
+.why-panel .component-row b:last-child {
+  white-space: nowrap;
+}
+
 @media (max-width: 850px) {
+  .control-row {
+    display: block;
+  }
+
+  .control-row > .status-filters,
+  .control-row > .toggle {
+    grid-column: auto;
+    justify-self: auto;
+  }
+
   .map-layout {
     height: auto;
     min-height: 0;
@@ -60,5 +252,19 @@
 
   .map-layout > .results {
     height: 550px;
+  }
+
+  .community-metrics-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .community-summary {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 480px) {
+  .community-metrics-grid {
+    grid-template-columns: 1fr;
   }
 }
