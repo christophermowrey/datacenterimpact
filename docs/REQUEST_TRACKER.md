@@ -14,7 +14,7 @@ This file is the working checklist for product and research requests. A request 
 | Request | Status | Acceptance criteria | Next action |
 | --- | --- | --- | --- |
 | Keep local development available | Complete | README documents direct Next.js and Docker local runs | Keep local and staging configuration separate |
-| Deploy current local changes to staging | Pending | Current worktree changes committed, pushed, and staging health/build verified | Push after the current score-model changes are reviewed |
+| Deploy current local changes to staging | Complete | Current worktree changes committed, pushed, and staging health/build verified | Monitor the deployment workflow; GitHub CLI is unavailable in this environment |
 | Community metric cards for every facility | Partial | Every facility has source-backed or explicitly numerical proxy values for water, electricity, air, sound, vibration, and land context | Research and attach source records to remaining facilities |
 | Hide metric evidence state in tooltip | Complete | Evidence basis is only exposed through the metric information control | Add source links and dates to the same tooltip |
 | Element Critical Houston One | Partial | Parent campus, related phases, sources, and duplicate relationship represented | Formalize Skybox/Element parent and phase records |
@@ -23,8 +23,8 @@ This file is the working checklist for product and research requests. A request 
 | Score breakdown | Partial | Component ranges are shown in the detail dropdown | Add weights, distance factors, score version, and source assumptions |
 | Lifecycle colors | Complete | Built red, construction orange, announced purple across filters, map, cards, legend, and details | Add visual regression coverage |
 | Address marker consistency | Partial | Green shared marker appears on map and impact overlay | Replace remaining legacy search glyphs |
-| Impact model terminology and weights | Pending | Remove Proximity, remove zoning/traffic, use Water 25%, Electricity 20%, Air 20%, Noise 15%, Vibration 10%, Land/Wildlife 5%, Scale/Site Context 5% | Implement and review revised score ranges |
-| Distance science | Pending | Category-specific formulas and cited literature appear in methodology and product education pages | Validate formulas against representative facilities |
+| Impact model terminology and weights | Complete | Remove Proximity, remove zoning/traffic, use Water 25%, Electricity 20%, Air 20%, Noise 15%, Vibration 10%, Land/Wildlife 5%, Scale/Site Context 5% | Review revised ranges with representative facilities |
+| Distance science | Complete | Category-specific formulas and cited literature appear in methodology and product education pages | Validate formulas against representative facilities |
 | Water-use approximation | Pending | WUE-based numerical ranges distinguish capacity, utilization, cooling, and direct water use | Add facility-specific WUE claims and benchmark source records |
 | First-use results scrolling cue | Complete | Cue appears only when the list overflows and dismisses after scroll or activation | Add browser-level interaction coverage |
 
