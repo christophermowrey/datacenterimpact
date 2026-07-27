@@ -19,10 +19,12 @@ Run this checklist in Chrome and one mobile-sized browser window after each UI c
 - [ ] Releasing the pointer stops panning.
 - [ ] Scrolling over the map zooms in and out.
 - [ ] Scrolling over the results list does not zoom the map.
+- [ ] The results list has its own visible scrollbar and scrolling it does not change the map viewport height or center.
 - [ ] Zoom buttons change the map scale and remain bounded.
 - [ ] Browser location requests permission only after the location button is clicked.
 - [ ] Clicking a facility pin selects the matching result and card.
 - [ ] The map legend identifies Built, Under construction, Announced, and the searched address.
+- [ ] Under construction uses the red lifecycle treatment consistently in filters, markers, legends, and result pills.
 - [ ] Facility pins remain easy to select at the default zoom and are visibly larger than the searched-address pin.
 - [ ] Map card links open the matching facility detail page.
 

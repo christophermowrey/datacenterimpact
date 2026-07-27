@@ -1,0 +1,64 @@
+/* Keep the map viewport independent from the results column. */
+.map-layout {
+  height: min(680px, calc(100svh - 180px));
+  min-height: 520px;
+  align-items: stretch;
+}
+
+.map-layout > .map,
+.map-layout > .results {
+  min-height: 0;
+  height: 100%;
+}
+
+.map-layout > .results {
+  overflow: hidden;
+}
+
+.result-list {
+  min-height: 0;
+  overflow-y: scroll;
+  scrollbar-gutter: stable;
+}
+
+.status-filters:before {
+  content: 'FILTER';
+  align-self: center;
+  color: var(--muted);
+  font: 10px 'DM Mono';
+  letter-spacing: .7px;
+  margin-right: 2px;
+}
+
+.dot.red,
+.status-pill.red {
+  background: #bd3030;
+  color: #fff;
+}
+
+.status-filters button .dot.red {
+  background: #bd3030;
+}
+
+.map .map-pin.construction {
+  color: #bd3030;
+}
+
+.legend-marker.construction {
+  color: #bd3030;
+}
+
+@media (max-width: 850px) {
+  .map-layout {
+    height: auto;
+    min-height: 0;
+  }
+
+  .map-layout > .map {
+    height: 470px;
+  }
+
+  .map-layout > .results {
+    height: 550px;
+  }
+}

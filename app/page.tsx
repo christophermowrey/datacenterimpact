@@ -10,7 +10,7 @@ import { calculateImpact, impactTone } from '@/lib/impact'
 const statuses: { key: FacilityStatus | 'all'; label: string; color?: string }[] = [
   { key: 'all', label: 'All' },
   { key: 'operational', label: 'Built', color: 'green' },
-  { key: 'construction', label: 'Under construction', color: 'amber' },
+  { key: 'construction', label: 'Under construction', color: 'red' },
   { key: 'announced', label: 'Announced', color: 'purple' },
 ]
 
@@ -20,7 +20,7 @@ export default function Home() {
   const [query, setQuery] = useState('')
   const [activeStatus, setActiveStatus] = useState<FacilityStatus | 'all'>('all')
   const [showAdditional, setShowAdditional] = useState(true)
-  const [selected, setSelected] = useState<Facility | null>(facilities[0])
+  const [selected, setSelected] = useState<Facility | null>(null)
   const [searched, setSearched] = useState(false)
   const [searchedLocation, setSearchedLocation] = useState<SearchedLocation | null>(null)
   const [pendingLocation, setPendingLocation] = useState<SearchedLocation | null>(null)
@@ -51,7 +51,7 @@ export default function Home() {
   function useLocation(location: SearchedLocation, label: string) { setSearchedLocation(location); setPendingLocation(null); setSearched(true); setQuery(label); setSubmittedQuery(label); setSuggestions([]); setActiveSuggestion(-1); setSelected(null); setSearchMessage(location.fallbackReason ? 'We found the surrounding locality and are using its approximate location for distances.' : location.coverage === 'outside' ? 'Location found in the expanding Houston-area coverage.' : location.precision === 'municipality_boundary' || location.precision === 'zip_centroid' ? 'We found the surrounding area, not an exact address. Distances are approximate.' : 'Location confirmed. Distances are calculated from this point.'); scrollToMap() }
   async function chooseSuggestion(suggestion: LocationSuggestion) { if (suggestion.latitude === undefined || suggestion.longitude === undefined) { if (!suggestion.placeId) return; setSearchMessage('Confirming the selected Google place...'); const response = await fetch(`/api/geocode/place?placeId=${encodeURIComponent(suggestion.placeId)}`); const payload = await response.json() as { result?: SearchedLocation }; if (!payload.result) { setSearchMessage('Google could not confirm that place. Choose another suggestion or add a ZIP code.'); return } setPendingLocation(payload.result) } else setPendingLocation(suggestion as SearchedLocation); setQuery(suggestion.label); setSuggestions([]); setActiveSuggestion(-1); setSearchMessage('Location selected. Press Address Impact to update the map.') }
   async function search(event: React.FormEvent) { event.preventDefault(); const value = query.trim(); if (!value) return; if (pendingLocation) { useLocation(pendingLocation, pendingLocation.label); return } if (suggestions.length > 0) { setSearchMessage('Choose a location from the suggestions so the address is not misidentified.'); return } setSearchMessage('Searching the location...'); try { const response = await fetch(`/api/geocode?q=${encodeURIComponent(value)}`); const payload = await response.json() as { result?: SearchedLocation | null; error?: string }; if (payload.result) useLocation(payload.result, payload.result.label); else { setSearchedLocation(null); setSubmittedQuery(value); setSearchMessage(payload.error ?? 'We could not identify that map location. Add the city, state, or ZIP code and try again.'); setSearched(true) } } catch { setSearchedLocation(null); setSubmittedQuery(value); setSearchMessage('Location search is unavailable. Try a full address or ZIP code.'); setSearched(true) } }
-  function clearSearch() { setSearched(false); setSearchedLocation(null); setPendingLocation(null); setSubmittedQuery(''); setSearchMessage(''); setSuggestions([]); setQuery(''); setSelected(facilities[0] ?? null) }
+  function clearSearch() { setSearched(false); setSearchedLocation(null); setPendingLocation(null); setSubmittedQuery(''); setSearchMessage(''); setSuggestions([]); setQuery(''); setSelected(null) }
   function selectFacility(facility: Facility) { setSelected((current) => current?.slug === facility.slug ? null : facility) }
 
   return <main className="shell"><header className="topbar"><Link href="/" className="brand"><span className="brand-mark">D</span><span>DATA CENTER <i>IMPACT</i></span></Link><nav><Link href="/open-map">Open-source map</Link><Link href="/learn">Learn</Link><Link href="/about">About the data</Link><a className="outline-button correction-link" href="https://github.com/christophermowrey/datacenterimpact/issues/new?template=correction.yml" target="_blank" rel="noreferrer">Report a correction <span>↗</span></a></nav></header>
