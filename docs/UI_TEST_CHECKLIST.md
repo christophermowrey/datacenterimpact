@@ -54,7 +54,7 @@ Run this checklist in Chrome and one mobile-sized browser window after each UI c
 
 - [ ] Facility detail page loads from a map card link.
 - [ ] Unknown facility slugs display the not-found page.
-- [ ] Status, class, Community Impact score range with `/100`, evidence quality, verification date, timeline, and limitations are visible.
+- [ ] Status, class, beta-score link/context, evidence quality, verification date, timeline, and limitations are visible; the actual score range appears only on the facility detail page.
 - [ ] Listed power shows an approximate Texas-home equivalent and identifies capacity versus actual consumption.
 - [ ] Back to map returns to the home page.
 

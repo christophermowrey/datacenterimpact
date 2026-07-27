@@ -1,6 +1,6 @@
 # Neighborhood Impact Methodology
 
-This is an initial transparent scoring method for local development. It is a screening tool, not a health model, property-value prediction, legal opinion, or environmental impact assessment.
+This is an initial transparent **beta** scoring method for local development. It is a screening tool, not a health model, property-value prediction, legal opinion, or environmental impact assessment.
 
 ## Distance model
 

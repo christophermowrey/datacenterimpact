@@ -2,6 +2,8 @@
 
 A noncommercial, map-first public project for checking whether AI and other data centers may affect a home across the Houston area. The current milestone is a self-contained demo with source-backed and clearly labeled records. It is not yet a complete verified public inventory. Houston-area coverage is expanding to surrounding cities and regional locations.
 
+Inspired by works such as Upton Sinclair’s *The Jungle*, Rachel Carson’s *Silent Spring*, and Barry Commoner’s *The Closing Circle*, Data Center Impact aims to be a modern reincarnation of these landmark books, focused on present-day concerns surrounding AI data centers.
+
 ## Run locally
 
 Requirements: Node.js 20+.
@@ -25,6 +27,8 @@ docker compose --env-file .env.local up --build
 
 Open `http://localhost:3000`. Stop it with `Ctrl+C`, or use `docker compose --env-file .env.local down` from another terminal.
 
+Local development enables the broader research inventory by default with `NEXT_PUBLIC_SHOW_CANDIDATES=true`. These candidate records are preliminary and remain disabled in the production publication layer.
+
 Other commands: `npm run build`, `npm start`, and `npm test`.
 
 Local health check: `http://localhost:3000/api/health`.
@@ -37,6 +41,7 @@ Local health check: `http://localhost:3000/api/health`.
 - The map uses MapLibre and OpenStreetMap raster tiles for local development. Production map-tile provider configuration remains the final launch gate and must use a compliant, configurable OSM-derived provider rather than relying on the public OSM tile server.
 - The open-source map is also available at `/open-map`.
 - The score range is designed to remain transparent and versioned; it is not a property-value, health, or legal prediction.
+- The impact score is currently in beta. It is a screening aid, not a final environmental, health, property-value, or legal assessment.
 - Distance is not itself an impact category. It changes each category differently: water and electricity retain regional effects, air uses an atmospheric-dispersion screening proxy, and sound/vibration attenuate more quickly. The formulas and literature links are documented in `docs/IMPACT_METHODOLOGY.md`.
 
 ## Community data reporting

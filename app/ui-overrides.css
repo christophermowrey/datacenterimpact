@@ -5,14 +5,88 @@
   align-items: stretch;
 }
 
-.map-layout > .map,
+.map-layout > .map-frame,
 .map-layout > .results {
   min-height: 0;
   height: 100%;
 }
 
+.map-layout > .map-frame {
+  display: flex;
+  flex-direction: column;
+}
+
+.map-layout > .map-frame > .map {
+  min-height: 0;
+  flex: 1;
+}
+
 .map-layout > .results {
   overflow: hidden;
+}
+
+.map-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  min-height: 30px;
+  border-top: 1px solid var(--line);
+  background: #f7f9f5;
+}
+
+.results .result-bottom {
+  display: none;
+}
+
+.controls::after {
+  content: 'Impact score: beta. Open a facility profile for the current screening range and breakdown.';
+  display: block;
+  margin-top: 12px;
+  color: var(--muted);
+  font-size: 10px;
+}
+
+.map-footer .map-legend {
+  position: static;
+  display: flex;
+  align-items: center;
+  gap: 8px 12px;
+  max-width: none;
+  padding: 7px 10px;
+  box-shadow: none;
+  background: transparent;
+  font-size: 9px;
+}
+
+.map-footer .map-legend strong {
+  width: auto;
+  font-size: 9px;
+}
+
+.map-attribution {
+  padding: 7px 10px;
+  color: var(--muted);
+  font-size: 9px;
+  line-height: 1.2;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.map-attribution a {
+  color: inherit;
+}
+
+.article-mission {
+  max-width: 720px;
+  margin: 22px 0 0;
+  color: var(--teal);
+  font: italic 17px/1.55 'Playfair Display', Georgia, serif;
+}
+
+.open-map-wrap > .map-frame {
+  height: 650px;
+  border: 1px solid var(--line);
 }
 
 .result-list {
@@ -87,18 +161,9 @@
   color: #bd3030;
 }
 
-.address-marker {
-  width: 34px;
-  height: 42px;
-  display: grid;
-  place-items: start center;
-  color: #2f855a;
-  filter: drop-shadow(0 1px 2px #fff);
-}
-
 .address-marker-icon {
   color: #2f855a;
-  font: 700 34px/1 Georgia, serif;
+  font: 700 16px/1 Georgia, serif;
   text-shadow: 0 1px 2px #fff;
 }
 
@@ -145,6 +210,15 @@
   align-items: start;
 }
 
+.detail-grid section > .map-frame {
+  height: 320px;
+  margin-bottom: 0;
+}
+
+.detail-grid section > .map-frame > .map {
+  min-height: 0;
+}
+
 .community-metrics-section {
   border-top: 1px solid var(--line);
   padding-top: 26px;
@@ -169,6 +243,25 @@
   color: var(--teal);
   font: 9px 'DM Mono';
   letter-spacing: .5px;
+}
+
+.community-metric-label {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  padding-right: 22px;
+}
+
+.metric-icon {
+  display: inline-grid;
+  place-items: center;
+  min-width: 22px;
+  height: 22px;
+  border: 1px solid #b5c9be;
+  border-radius: 50%;
+  color: var(--teal);
+  font-size: 13px;
+  line-height: 1;
 }
 
 .community-metric strong {
@@ -230,6 +323,16 @@
   white-space: nowrap;
 }
 
+.component-score {
+  align-items: flex-end;
+  text-align: right;
+}
+
+.component-score small {
+  color: var(--muted);
+  font-size: 9px;
+}
+
 @media (max-width: 850px) {
   .control-row {
     display: block;
@@ -246,7 +349,7 @@
     min-height: 0;
   }
 
-  .map-layout > .map {
+  .map-layout > .map-frame {
     height: 470px;
   }
 
@@ -260,6 +363,18 @@
 
   .community-summary {
     grid-template-columns: 1fr;
+  }
+
+  .map-footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .map-attribution {
+    padding-top: 0;
+    text-align: left;
+    white-space: normal;
   }
 }
 

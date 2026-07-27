@@ -7,13 +7,6 @@ import type { Facility } from '@/lib/facilities'
 export type SearchedLocation = { latitude: number; longitude: number; label: string; coverage?: 'supported' | 'outside' | 'unknown'; source?: 'google' | 'openstreetmap'; precision?: 'exact_address' | 'place_label' | 'municipality_boundary' | 'zip_centroid'; fallbackReason?: 'exact_address_not_found' }
 type MapViewProps = { facilities: Facility[]; selected: Facility | null; onSelect: (facility: Facility) => void; searchedLocation: SearchedLocation | null }
 
-function addressMarkerElement() {
-  const element = document.createElement('div')
-  element.className = 'address-marker'
-  element.innerHTML = '<span class="address-marker-icon" aria-hidden="true">⌖</span>'
-  return element
-}
-
 export default function MapView({ facilities, selected, onSelect, searchedLocation }: MapViewProps) {
   const mapElement = useRef<HTMLDivElement>(null)
   const mapRef = useRef<import('maplibre-gl').Map | null>(null)
@@ -45,8 +38,7 @@ export default function MapView({ facilities, selected, onSelect, searchedLocati
       })
       map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'top-right')
       map.addControl(new maplibregl.GeolocateControl({ positionOptions: { enableHighAccuracy: true }, trackUserLocation: false }), 'top-right')
-      map.addControl(new maplibregl.AttributionControl({ compact: true }), 'bottom-right')
-      mapRef.current = map
+       mapRef.current = map
       setReady(true)
     }
     createMap()
@@ -97,11 +89,12 @@ export default function MapView({ facilities, selected, onSelect, searchedLocati
     import('maplibre-gl').then((maplibregl) => {
       searchedMarkerRef.current?.remove()
        searchedMarkerRef.current = searchedLocation
-         ? new maplibregl.Marker({ element: addressMarkerElement(), anchor: 'bottom' }).setLngLat([searchedLocation.longitude, searchedLocation.latitude]).addTo(mapRef.current!)
+         ? new maplibregl.Marker({ color: '#2f855a' }).setLngLat([searchedLocation.longitude, searchedLocation.latitude]).addTo(mapRef.current!)
         : null
     })
     return () => { searchedMarkerRef.current?.remove() }
   }, [searchedLocation, ready])
 
-  return <div className="map" aria-label="Interactive map of Houston-area data centers" role="application"><div ref={mapElement} className="maplibre-canvas" /><div className="map-legend" aria-label="Map key"><strong>Map key</strong><span><i className="legend-marker built">●</i> Built</span><span><i className="legend-marker construction">◆</i> Under construction</span><span><i className="legend-marker announced">○</i> Announced</span><span><i className="address-marker-icon" aria-hidden="true">⌖</i> Address</span></div>{searchedLocation && <div className="searched-location" aria-label={`Searched location: ${searchedLocation.label}`}><span className="address-marker-icon" aria-hidden="true">⌖</span><strong>Address Impact</strong><small>{searchedLocation.label}</small></div>}{selected && <div className="map-card"><div className="card-kicker"><span className={`dot ${selected.status === 'operational' ? 'green' : selected.status === 'construction' ? 'red' : selected.color}`} />{selected.status === 'operational' ? 'Built' : selected.statusLabel}<span className="card-distance">{selected.distanceLabel ?? 'Distance pending'}</span></div><h3>{selected.name}</h3><p>{selected.city}, {selected.county} County · {selected.classLabel}</p><div className="card-footer"><Link href={`/data-centers/${selected.slug}`}>View full details <span>→</span></Link></div></div>}</div>
+  const attribution = process.env.NEXT_PUBLIC_MAP_STYLE_URL ? <><a href="https://maplibre.org/" target="_blank" rel="noreferrer">MapLibre</a> · <a href="https://stadiamaps.com/" target="_blank" rel="noreferrer">© Stadia Maps</a> · <a href="https://openmaptiles.org/" target="_blank" rel="noreferrer">© OpenMapTiles</a> · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap</a></> : <><a href="https://maplibre.org/" target="_blank" rel="noreferrer">MapLibre</a> · <a href="https://www.openstreetmap.org/copyright" target="_blank" rel="noreferrer">© OpenStreetMap contributors</a></>
+  return <div className="map-frame"><div className="map" aria-label="Interactive map of Houston-area data centers" role="application"><div ref={mapElement} className="maplibre-canvas" />{searchedLocation && <div className="searched-location" aria-label={`Searched location: ${searchedLocation.label}`}><span className="address-marker-icon" aria-hidden="true">●</span><strong>Address Impact</strong><small>{searchedLocation.label}</small></div>}{selected && <div className="map-card"><div className="card-kicker"><span className={`dot ${selected.status === 'operational' ? 'green' : selected.status === 'construction' ? 'red' : selected.color}`} />{selected.status === 'operational' ? 'Built' : selected.statusLabel}<span className="card-distance">{selected.distanceLabel ?? 'Distance pending'}</span></div><h3>{selected.name}</h3><p>{selected.city}, {selected.county} County · {selected.classLabel}</p><div className="card-footer"><Link href={`/data-centers/${selected.slug}`}>View full details <span>→</span></Link></div></div>}</div><div className="map-footer"><div className="map-legend" aria-label="Map key"><strong>Map key</strong><span><i className="legend-marker built">●</i> Built</span><span><i className="legend-marker construction">◆</i> Under construction</span><span><i className="legend-marker announced">○</i> Announced</span><span><i className="legend-marker searched">●</i> Address</span></div><div className="map-attribution">{attribution}</div></div></div>
 }
