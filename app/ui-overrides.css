@@ -258,6 +258,48 @@
   background: #e9f0e9;
 }
 
+.technology-route-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  max-width: 720px;
+}
+
+.technology-route-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border: 1px solid var(--line);
+  padding: 18px;
+  background: #f5f8f4;
+  color: var(--ink);
+  text-decoration: none;
+}
+
+.technology-route-card:hover {
+  background: #e8f0eb;
+}
+
+.technology-route-card span {
+  color: var(--teal);
+  font: 9px 'DM Mono';
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+
+.technology-route-card strong {
+  font: 22px 'Playfair Display';
+}
+
+.technology-route-card small {
+  color: var(--muted);
+  font-size: 11px;
+}
+
+@media(max-width:480px) {
+  .technology-route-list { grid-template-columns: 1fr; }
+}
+
 .technology-prototype-grid {
   position: absolute;
   inset: 0;
