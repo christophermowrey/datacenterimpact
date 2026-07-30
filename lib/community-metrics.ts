@@ -43,7 +43,7 @@ export function communityMetricsFor(facility: Facility): CommunityMetric[] {
     {
       key: 'air',
       label: 'Air pollution and generation',
-      icon: '◌',
+       icon: '≋',
       value: skybox ? '2 MW generator units · 7,000 gal fuel per generator' : 'Not publicly disclosed',
       basis: skybox ? 'reported' : 'not_disclosed',
       note: skybox ? 'Company-reported backup-generation and fuel specifications; generator count and actual emissions were not disclosed.' : 'No facility-specific emissions inventory, permit limit, fuel consumption, or stack test was found in the current review.',
@@ -51,7 +51,7 @@ export function communityMetricsFor(facility: Facility): CommunityMetric[] {
     {
       key: 'sound',
       label: 'Sound pollution',
-      icon: ')))',
+       icon: '〰',
       value: '55–85 dBA benchmark range at equipment boundary',
       basis: 'proxy',
       note: 'Comparable cooling and backup equipment proxy, not an off-site measurement. Property-line sound depends on equipment, barriers, distance, and operating mode.',
@@ -59,7 +59,7 @@ export function communityMetricsFor(facility: Facility): CommunityMetric[] {
     {
       key: 'vibration',
       label: 'Vibration',
-      icon: '〰',
+       icon: '⌁',
       value: 'No facility-specific measurement',
       basis: 'not_disclosed',
       note: 'No public vibration study or property-line measurement was found. Generators, transformers, and construction can be relevant sources.',
@@ -67,7 +67,7 @@ export function communityMetricsFor(facility: Facility): CommunityMetric[] {
     {
       key: 'construction',
       label: 'Construction and traffic',
-      icon: '⇢',
+       icon: '🚧',
       value: construction ? 'Construction activity reported; traffic counts not disclosed' : skybox ? '96-hour backup runtime reported; traffic counts not disclosed' : 'Facility-specific traffic counts not disclosed',
       basis: construction ? 'reported' : 'not_disclosed',
       note: construction ? 'Lifecycle evidence indicates active or planned work, but route, duration, and truck counts require separate records.' : 'No facility-specific traffic study or operating-traffic count was found.',
