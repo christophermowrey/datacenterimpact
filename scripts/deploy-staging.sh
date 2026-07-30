@@ -5,7 +5,7 @@ app_dir="/opt/data-center-impact"
 env_file="/etc/data-center-impact/app.env"
 state_dir="/var/lib/data-center-impact"
 state_file="$state_dir/last-good-ref"
-compose=(docker compose --env-file "$env_file" --profile production)
+compose=(docker compose --project-name data-center-impact --env-file "$env_file" --profile production)
 
 test -f "$env_file"
 if ! grep -q '^NEXT_PUBLIC_SHOW_CANDIDATES=' "$env_file"; then

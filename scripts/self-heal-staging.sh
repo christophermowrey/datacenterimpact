@@ -3,7 +3,7 @@ set -Eeuo pipefail
 
 app_dir="/opt/data-center-impact"
 env_file="/etc/data-center-impact/app.env"
-compose=(docker compose --env-file "$env_file" --profile production)
+compose=(docker compose --project-name data-center-impact --env-file "$env_file" --profile production)
 
 if ! systemctl is-active --quiet docker; then
   systemctl restart docker
