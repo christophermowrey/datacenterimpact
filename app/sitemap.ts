@@ -7,9 +7,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
   return [
     { url: base, lastModified: new Date() },
     { url: `${base}/about`, lastModified: new Date() },
+    { url: `${base}/calculator`, lastModified: new Date() },
+    { url: `${base}/map-technology`, lastModified: new Date() },
     { url: `${base}/learn`, lastModified: new Date() },
     { url: `${base}/privacy`, lastModified: new Date() },
-    { url: `${base}/scroll-solutions`, lastModified: new Date() },
     ...publicFacilities.map((facility) => ({ url: `${base}/data-centers/${facility.slug}`, lastModified: new Date(facility.verified) })),
   ]
 }

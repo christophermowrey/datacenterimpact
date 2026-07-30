@@ -27,6 +27,10 @@ This file is the working checklist for product and research requests. A request 
 | Distance science | Complete | Category-specific formulas and cited literature appear in methodology and product education pages | Validate formulas against representative facilities |
 | Water-use approximation | Pending | WUE-based numerical ranges distinguish capacity, utilization, cooling, and direct water use | Add facility-specific WUE claims and benchmark source records |
 | First-use results scrolling cue | Complete | Cue appears only when the list overflows and dismisses after scroll or activation | Add browser-level interaction coverage |
+| Calculator work-in-progress page | Partial | A clearly provisional page describes separate immediate and address calculators without showing scores on the home or facility pages | Gather feedback and define score ranges, thresholds, and cumulative rules before implementation |
+| Heat production impact | Pending | Research-backed heat-output or cooling-exhaust evidence can be represented separately from electricity and water | Identify public measurements, proxies, and appropriate distance behavior |
+| Illumination / light pollution impact | Pending | Nighttime lighting, glare, shielding, and sleep/dark-sky concerns have an explicit evidence category | Identify public permitting, site-design, and measurement sources |
+| Autocomplete provider behavior | Partial | Enter and suggestion selection apply the first resolved result; Google, Nominatim, and ArcGIS address fallback support suggestions and direct results | Add browser-level coverage for provider modes, keyboard selection, and failed lookups; verify ArcGIS production terms and quotas |
 
 ## Deployment Rule
 
