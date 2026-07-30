@@ -1,5 +1,6 @@
 services:
   web:
+    restart: unless-stopped
     build:
       context: .
       args:
@@ -20,6 +21,7 @@ services:
       db:
         condition: service_healthy
   db:
+    restart: unless-stopped
     image: postgis/postgis:16-3.4
     environment:
       POSTGRES_DB: data_center_impact
@@ -35,6 +37,7 @@ services:
   caddy:
     image: caddy:2.10-alpine
     profiles: ["production"]
+    restart: unless-stopped
     ports:
       - "80:80"
       - "443:443"
@@ -46,7 +49,7 @@ services:
       - caddy-config:/config
     depends_on:
       web:
-        condition: service_started
+        condition: service_healthy
 volumes:
   data-center-impact-db:
 

@@ -15,6 +15,7 @@ permissions:
 jobs:
   deploy:
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     steps:
       - name: Validate deployment configuration
         env:
@@ -39,4 +40,4 @@ jobs:
           printf '%s\n' "$SSH_KEY" > "$HOME/.ssh/lightsail_deploy_key"
           printf '%s\n' "$KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
           chmod 600 "$HOME/.ssh/lightsail_deploy_key" "$HOME/.ssh/known_hosts"
-          ssh -o BatchMode=yes -o IdentitiesOnly=yes -i "$HOME/.ssh/lightsail_deploy_key" "$USER@$HOST" 'sudo git -C /opt/data-center-impact fetch origin main && sudo git -C /opt/data-center-impact reset --hard origin/main && sudo bash /opt/data-center-impact/scripts/deploy-staging.sh'
+          timeout 15m ssh -o BatchMode=yes -o ConnectTimeout=15 -o ServerAliveInterval=15 -o ServerAliveCountMax=3 -o IdentitiesOnly=yes -i "$HOME/.ssh/lightsail_deploy_key" "$USER@$HOST" 'sudo bash /opt/data-center-impact/scripts/deploy-staging.sh'
