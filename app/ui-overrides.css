@@ -243,6 +243,85 @@
   text-transform: uppercase;
 }
 
+.technology-home-badge {
+  display: inline-block;
+  margin-left: 8px;
+  color: var(--orange);
+  font: 9px 'DM Mono';
+  letter-spacing: .5px;
+  text-transform: uppercase;
+}
+
+.technology-home-map .technology-prototype {
+  position: relative;
+  overflow: hidden;
+  background: #e9f0e9;
+}
+
+.technology-prototype-grid {
+  position: absolute;
+  inset: 0;
+  opacity: .55;
+  background-image: linear-gradient(28deg, transparent 47%, #fff 48%, #fff 50%, transparent 51%), linear-gradient(-35deg, transparent 46%, #d2e0d6 47%, #d2e0d6 49%, transparent 50%);
+  background-size: 180px 130px, 230px 170px;
+}
+
+.technology-map-caption {
+  position: absolute;
+  z-index: 4;
+  top: 14px;
+  left: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding: 9px 11px;
+  background: rgba(255,255,255,.92);
+  box-shadow: 0 3px 12px #526e642b;
+}
+
+.technology-map-caption span { color: var(--teal); font: 10px 'DM Mono'; text-transform: uppercase; }
+.technology-map-caption small { color: var(--muted); font-size: 10px; }
+
+.technology-home-pin {
+  position: absolute;
+  z-index: 3;
+  width: 36px;
+  height: 36px;
+  border: 0;
+  border-radius: 50%;
+  color: #fff;
+  font-size: 21px;
+  line-height: 1;
+  cursor: pointer;
+  text-shadow: 0 1px 2px #526e6466;
+  box-shadow: 0 2px 7px #526e6440;
+}
+
+.technology-home-pin.selected { outline: 3px solid #ffffffaa; transform: scale(1.15); }
+.technology-home-pin-0 { top: 27%; left: 25%; background: #bd3030; }
+.technology-home-pin-1 { top: 50%; left: 44%; background: var(--orange); }
+.technology-home-pin-2 { top: 33%; left: 66%; background: var(--purple); }
+.technology-home-pin-3 { top: 67%; left: 72%; background: #bd3030; }
+.technology-home-pin-4 { top: 72%; left: 30%; background: var(--purple); }
+
+.technology-home-address {
+  position: absolute;
+  z-index: 4;
+  right: 14px;
+  bottom: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  max-width: 250px;
+  border-left: 3px solid #2f855a;
+  padding: 9px 11px;
+  background: #fff;
+  box-shadow: 0 3px 12px #526e642b;
+}
+
+.technology-home-address strong { color: var(--teal); font-size: 11px; }
+.technology-home-address small { color: var(--muted); font-size: 10px; }
+
 .technology-grid {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
