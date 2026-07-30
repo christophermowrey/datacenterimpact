@@ -164,12 +164,7 @@
 }
 
 .searched-location {
-  border-left-color: #2f855a !important;
-}
-
-.searched-location .address-marker-icon,
-.search-note > span {
-  color: #2f855a !important;
+  border-left-color: #2f855a;
 }
 
 .searched-location .address-marker-icon,
@@ -262,56 +257,6 @@
   overflow: hidden;
   background: #e9f0e9;
 }
-
-.technology-real-map {
-  position: relative;
-  overflow: hidden;
-}
-
-.technology-real-map .leaflet-container,
-.technology-real-map .ol-viewport,
-.technology-real-map .mapboxgl-map {
-  width: 100%;
-  height: 100%;
-}
-
-.technology-leaflet-pin,
-.technology-mapbox-pin {
-  border: 2px solid #fff;
-  border-radius: 50%;
-  color: #fff;
-  cursor: pointer;
-  display: grid;
-  height: 26px;
-  place-items: center;
-  width: 26px;
-  box-shadow: 0 2px 6px #526e6440;
-}
-
-.technology-leaflet-pin.operational,
-.technology-mapbox-pin.operational { background: #bd3030; }
-.technology-leaflet-pin.construction,
-.technology-mapbox-pin.construction { background: var(--orange); }
-.technology-leaflet-pin.announced,
-.technology-mapbox-pin.announced { background: var(--purple); }
-
-.technology-map-error {
-  position: absolute;
-  z-index: 4;
-  left: 20px;
-  top: 20px;
-  display: flex;
-  flex-direction: column;
-  gap: 5px;
-  max-width: 330px;
-  border-left: 3px solid var(--orange);
-  background: rgba(255,255,255,.96);
-  padding: 13px 15px;
-  box-shadow: 0 3px 12px #526e642b;
-}
-
-.technology-map-error strong { font-size: 12px; }
-.technology-map-error small { color: var(--muted); font-size: 10px; line-height: 1.4; }
 
 .technology-route-list {
   display: grid;
@@ -617,46 +562,6 @@
   gap: 12px;
 }
 
-.calculator-metrics-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 10px;
-}
-
-.calculator-metric-card {
-  position: relative;
-  min-height: 126px;
-  border: 1px solid var(--line);
-  background: #f5f8f4;
-  padding: 15px 15px 13px 48px;
-}
-
-.calculator-metric-card h3 {
-  margin: 0 0 5px;
-  font-size: 14px;
-}
-
-.calculator-metric-card p {
-  color: var(--muted);
-  font-size: 11px;
-  line-height: 1.4;
-  margin: 0;
-}
-
-.calculator-metric-icon {
-  position: absolute;
-  left: 15px;
-  top: 15px;
-  color: var(--teal);
-  font-size: 22px;
-  line-height: 1;
-}
-
-.calculator-metric-card .coming-soon-label {
-  margin-top: 11px;
-  font-size: 8px;
-}
-
 .calculator-cards section,
 .theory-grid > div {
   border: 1px solid var(--line);
@@ -706,10 +611,6 @@
   .theory-grid {
     grid-template-columns: 1fr;
   }
-}
-
-@media(max-width:480px) {
-  .calculator-metrics-grid { grid-template-columns: 1fr; }
 }
 
 .search-note > span,

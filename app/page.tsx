@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import Link from 'next/link'
 import { facilities, type Facility, type FacilityStatus } from '@/lib/facilities'
 import BaseMapView, { type SearchedLocation } from '@/components/MapView'
@@ -35,7 +35,7 @@ export default function Home({ technology = 'maplibre' }: { technology?: MapTech
   const resultListRef = useRef<HTMLDivElement>(null)
   const [showScrollCue, setShowScrollCue] = useState(true)
   const headlines = ['Is an AI data center affecting your home?', 'Is an AI data center coming to your neighborhood?', 'Check what is near your address.']
-  const MapView = useMemo(() => (props: Parameters<typeof BaseMapView>[0]) => technology === 'maplibre' ? <BaseMapView {...props} /> : <TechnologyMap technology={technology} {...props} />, [technology])
+  const MapView = (props: Parameters<typeof BaseMapView>[0]) => technology === 'maplibre' ? <BaseMapView {...props} /> : <TechnologyMap technology={technology} {...props} />
 
   useEffect(() => { const timer = window.setInterval(() => setHeadline((current) => (current + 1) % headlines.length), 5000); return () => window.clearInterval(timer) }, [headlines.length])
   useEffect(() => {
