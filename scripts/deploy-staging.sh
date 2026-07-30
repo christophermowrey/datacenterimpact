@@ -29,6 +29,9 @@ trap rollback EXIT
 
 git fetch origin main
 git reset --hard origin/main
+if [ -x "$app_dir/scripts/install-self-healing.sh" ]; then
+  bash "$app_dir/scripts/install-self-healing.sh"
+fi
 
 # Build before replacing the running containers. A failed build leaves the last image available.
 timeout 12m "${compose[@]}" build web
