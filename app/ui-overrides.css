@@ -252,6 +252,35 @@
   text-transform: uppercase;
 }
 
+.technology-switcher {
+  min-height: 36px;
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  overflow-x: auto;
+  padding: 7px 5.3%;
+  border-bottom: 1px solid var(--line);
+  background: #eef4ef;
+  white-space: nowrap;
+}
+
+.technology-switcher span {
+  color: var(--teal);
+  font: 9px 'DM Mono';
+  letter-spacing: .7px;
+}
+
+.technology-switcher a {
+  color: var(--muted);
+  font-size: 10px;
+  text-decoration: none;
+}
+
+.technology-switcher a.active {
+  color: var(--teal);
+  font-weight: 700;
+}
+
 .technology-home-map .technology-prototype {
   position: relative;
   overflow: hidden;
