@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from 'react'
 import Link from 'next/link'
 import { facilities, type Facility, type FacilityStatus } from '@/lib/facilities'
 import BaseMapView, { type SearchedLocation } from '@/components/MapView'
+import LeafletMapView from '@/components/LeafletMapView'
 import TechnologyMap from '@/components/TechnologyMap'
 import { formatMiles, haversineMiles } from '@/lib/geo'
 import { calculateImpact, impactTone } from '@/lib/impact'
@@ -35,7 +36,7 @@ export default function Home({ technology = 'maplibre' }: { technology?: MapTech
   const resultListRef = useRef<HTMLDivElement>(null)
   const [showScrollCue, setShowScrollCue] = useState(true)
   const headlines = ['Is an AI data center affecting your home?', 'Is an AI data center coming to your neighborhood?', 'Check what is near your address.']
-  const MapView = useMemo(() => (props: Parameters<typeof BaseMapView>[0]) => technology === 'maplibre' ? <BaseMapView {...props} /> : <TechnologyMap technology={technology} {...props} />, [technology])
+  const MapView = useMemo(() => (props: Parameters<typeof BaseMapView>[0]) => technology === 'maplibre' ? <BaseMapView {...props} /> : technology === 'leaflet' ? <LeafletMapView {...props} /> : <TechnologyMap technology={technology} {...props} />, [technology])
 
   useEffect(() => { const timer = window.setInterval(() => setHeadline((current) => (current + 1) % headlines.length), 5000); return () => window.clearInterval(timer) }, [headlines.length])
   useEffect(() => {
