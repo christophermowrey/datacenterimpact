@@ -29,7 +29,7 @@ trap rollback EXIT
 
 git fetch origin main
 git reset --hard origin/main
-if [ -x "$app_dir/scripts/install-self-healing.sh" ]; then
+if [ -f "$app_dir/scripts/install-self-healing.sh" ]; then
   bash "$app_dir/scripts/install-self-healing.sh"
 fi
 
