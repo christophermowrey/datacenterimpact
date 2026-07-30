@@ -38,6 +38,10 @@ The private key is consumed by GitHub Actions at runtime and is never committed.
 
 Every push to `main` runs `.github/workflows/deploy-staging.yml`. The workflow connects to Lightsail, fetches `origin/main`, rebuilds the production Compose profile, and prints service status. It can also be run manually from the Actions tab.
 
+The staging host also installs `data-center-impact-self-heal.timer`. It checks the local health endpoint every two minutes, restarts Docker when necessary, and brings the existing Compose containers back up without rebuilding. Deployment keeps a last-known-good Git ref and restores it when a build or health check fails.
+
+If the GitHub Actions SSH step cannot connect, host-level self-healing cannot run. Use the Lightsail browser console to restart the instance and verify its static IP and SSH host key. Then rerun `scripts/bootstrap-lightsail.sh` if the self-healing timer was never installed.
+
 ## Verification
 
 After DNS and HTTPS are ready, verify:

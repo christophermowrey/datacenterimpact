@@ -20,6 +20,7 @@ fi
 
 sudo chown -R ubuntu:ubuntu "$app_dir"
 sudo install -m 0755 "$app_dir/scripts/deploy-staging.sh" /usr/local/sbin/data-center-impact-deploy
+sudo bash "$app_dir/scripts/install-self-healing.sh"
 
 if [ ! -f "$env_file" ]; then
   postgres_password="$(openssl rand -hex 32)"
