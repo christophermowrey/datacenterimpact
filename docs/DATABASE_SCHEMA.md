@@ -42,3 +42,19 @@ This prevents a directory listing, social post, or candidate report from becomin
 ## Not Yet Connected
 
 The current Next.js app still reads `lib/facilities.ts`. This migration establishes the data model without changing the live map. The next implementation step is a one-time import into the new tables, followed by read-only admin review queries before replacing the application data source.
+
+## Initial Import
+
+Run migrations with `DATABASE_URL` set:
+
+```text
+DATABASE_URL=postgres://... npm run db:migrate
+```
+
+The legacy import is deliberately a separate one-time operation:
+
+```text
+DATABASE_URL=postgres://... npm run db:import-facilities
+```
+
+The importer maps the legacy `demo` records to published records, maps legacy `Preliminary` confidence to candidate confidence, and creates research reports for candidate records. It does not treat unresolved candidate coordinates as public map locations. Do not rerun the importer against a populated database until a deduplication/import-run policy is added.
