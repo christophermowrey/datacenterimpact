@@ -11,6 +11,12 @@ test -f "$env_file"
 if ! grep -q '^NEXT_PUBLIC_SHOW_CANDIDATES=' "$env_file"; then
   echo 'NEXT_PUBLIC_SHOW_CANDIDATES=true' | tee -a "$env_file" >/dev/null
 fi
+if ! grep -q '^ADMIN_DOMAIN=' "$env_file"; then
+  echo 'ADMIN_DOMAIN=admin.staging.datacenterimpact.app' | tee -a "$env_file" >/dev/null
+fi
+if ! grep -q '^ADMIN_ENABLED=' "$env_file"; then
+  echo 'ADMIN_ENABLED=false' | tee -a "$env_file" >/dev/null
+fi
 cd "$app_dir"
 mkdir -p "$state_dir"
 previous_ref="$(cat "$state_file" 2>/dev/null || true)"
