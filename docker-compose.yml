@@ -17,6 +17,14 @@ services:
       NEXT_PUBLIC_OSM_TILE_URL: ${NEXT_PUBLIC_OSM_TILE_URL:-https://tile.openstreetmap.org/{z}/{x}/{y}.png}
       NEXT_PUBLIC_SHOW_CANDIDATES: ${NEXT_PUBLIC_SHOW_CANDIDATES:-false}
       GOOGLE_MAPS_API_KEY: ${GOOGLE_MAPS_API_KEY:-}
+      ADMIN_ENABLED: ${ADMIN_ENABLED:-false}
+      ADMIN_USERNAME: ${ADMIN_USERNAME:-}
+      ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
+      DATABASE_URL: ${DATABASE_URL:-}
+      STORAGE_PATH: ${STORAGE_PATH:-/app}
+      ADMIN_UPTIME_URL: ${ADMIN_UPTIME_URL:-}
+      ADMIN_COSTS_URL: ${ADMIN_COSTS_URL:-}
+      ADMIN_METRICS_URL: ${ADMIN_METRICS_URL:-}
     depends_on:
       db:
         condition: service_healthy
@@ -43,6 +51,7 @@ services:
       - "443:443"
     environment:
       DOMAIN: ${DOMAIN:-datacenterimpact.app}
+      ADMIN_DOMAIN: ${ADMIN_DOMAIN:-admin.datacenterimpact.app}
     volumes:
       - ./Caddyfile:/etc/caddy/Caddyfile:ro
       - caddy-data:/data

@@ -39,6 +39,7 @@ timeout 5m "${compose[@]}" up -d --no-build --remove-orphans
 
 for attempt in $(seq 1 30); do
   if curl --fail --silent --show-error --max-time 3 http://127.0.0.1:3000/api/health >/dev/null; then
+    timeout 2m "${compose[@]}" exec -T web npm run db:migrate
     printf '%s\n' "$(git rev-parse HEAD)" > "$state_file"
     trap - EXIT
     "${compose[@]}" ps

@@ -73,6 +73,212 @@
   color: inherit;
 }
 
+.admin-page {
+  max-width: 1180px;
+  min-height: 100vh;
+  margin: auto;
+  padding: 58px 6% 90px;
+  background: var(--paper);
+}
+
+.admin-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 30px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 34px;
+}
+
+.admin-header h1 {
+  margin: 0 0 14px;
+  font: 54px/1 'Playfair Display', Georgia, serif;
+  letter-spacing: -1.5px;
+}
+
+.admin-lede {
+  max-width: 560px;
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.admin-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.admin-meta span,
+.admin-meta small,
+.admin-panel-heading span,
+.admin-label {
+  font: 9px 'DM Mono', monospace;
+  letter-spacing: .7px;
+  text-transform: uppercase;
+}
+
+.admin-meta span,
+.admin-panel-heading span {
+  color: var(--teal);
+}
+
+.admin-meta small {
+  color: var(--muted);
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.admin-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  padding: 28px 0;
+}
+
+.admin-card,
+.admin-panel {
+  border: 1px solid var(--line);
+  background: #fff;
+}
+
+.admin-card {
+  min-height: 142px;
+  padding: 19px;
+}
+
+.admin-card-featured {
+  border-top: 3px solid var(--teal);
+}
+
+.admin-label {
+  margin: 0 0 17px;
+  color: var(--muted);
+}
+
+.admin-value {
+  display: block;
+  margin-bottom: 10px;
+  color: var(--ink);
+  font: 27px 'DM Mono', monospace;
+}
+
+.admin-card p:last-child {
+  margin: 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.admin-status {
+  display: inline-block;
+  padding: 5px 7px;
+  background: #fff3e5;
+  color: #9a6523;
+  font: 10px 'DM Mono', monospace;
+  text-transform: uppercase;
+  letter-spacing: .3px;
+}
+
+.admin-status.good {
+  background: #e6f2e9;
+  color: #36725a;
+}
+
+.admin-columns {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+.admin-panel {
+  padding: 21px;
+}
+
+.admin-panel-heading {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 15px;
+  border-bottom: 1px solid var(--line);
+  padding-bottom: 15px;
+}
+
+.admin-panel-heading h2 {
+  margin: 0;
+  font: 25px 'Playfair Display', Georgia, serif;
+}
+
+.admin-list {
+  margin: 0;
+}
+
+.admin-list div {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border-bottom: 1px solid #edf1ee;
+  padding: 13px 0;
+}
+
+.admin-list dt,
+.admin-list dd {
+  margin: 0;
+  font-size: 12px;
+}
+
+.admin-list dd {
+  text-align: right;
+}
+
+.admin-links {
+  min-height: 142px;
+}
+
+.admin-links a,
+.admin-links p {
+  display: flex;
+  justify-content: space-between;
+  border-bottom: 1px solid #edf1ee;
+  padding: 13px 0;
+  margin: 0;
+  color: var(--teal);
+  font-size: 12px;
+  text-decoration: none;
+}
+
+.admin-links p {
+  color: var(--muted);
+}
+
+.admin-links a:hover {
+  color: var(--orange);
+}
+
+.admin-note {
+  margin: 18px 0 0;
+  color: var(--muted);
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+@media (max-width: 850px) {
+  .admin-grid { grid-template-columns: 1fr 1fr; }
+}
+
+@media (max-width: 560px) {
+  .admin-page { padding: 42px 6% 65px; }
+  .admin-header { display: block; }
+  .admin-header h1 { font-size: 45px; }
+  .admin-meta { margin-top: 25px; text-align: left; }
+  .admin-grid,
+  .admin-columns { grid-template-columns: 1fr; }
+}
+
 .article-mission {
   max-width: 720px;
   margin: 22px 0 0;

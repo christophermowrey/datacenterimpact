@@ -30,13 +30,33 @@ Add these repository secrets under **Settings → Secrets and variables → Acti
 | `LIGHTSAIL_HOST` | The Lightsail static IPv4 address |
 | `LIGHTSAIL_USER` | `ubuntu` |
 | `LIGHTSAIL_SSH_KEY` | The downloaded Lightsail private key, entered by the owner only |
-| `LIGHTSAIL_KNOWN_HOSTS` | Output from `ssh-keyscan -H <static-ip>` |
+| `LIGHTSAIL_KNOWN_HOSTS` | Verified `known_hosts` line for the static IP. If Windows `ssh-keyscan` reports an unsupported KEX warning, use the valid `ssh-ed25519` line recorded by a successful SSH connection and do not paste the warning text. |
 
 The private key is consumed by GitHub Actions at runtime and is never committed. Do not print it in workflow logs.
 
+## Local SSH connection
+
+From Windows PowerShell, use the local helper with the staging static IP:
+
+```powershell
+.\scripts\connect-staging.ps1
+```
+
+The helper uses the local key at `C:\Users\chris\DeprecatedOneDrive\Desktop\datacenter-impact-staging-ssh.pem` and connects as `ubuntu`. Override the host or key when needed:
+
+```powershell
+.\scripts\connect-staging.ps1 -HostAddress 13.221.172.208 -KeyPath "C:\path\to\key.pem"
+```
+
 ## Deployments
 
-Every push to `main` runs `.github/workflows/deploy-staging.yml`. The workflow connects to Lightsail, fetches `origin/main`, rebuilds the production Compose profile, and prints service status. It can also be run manually from the Actions tab.
+Every push to `main` runs `.github/workflows/deploy-staging.yml`. The workflow connects to Lightsail, fetches `origin/main`, rebuilds the production Compose profile, runs database migrations, and prints service status. It can also be run manually from the Actions tab.
+
+The legacy `lib/facilities.ts` import is intentionally separate and must only be run once after reviewing the migration:
+
+```bash
+DATABASE_URL=postgres://... npm run db:import-facilities
+```
 
 The staging host also installs `data-center-impact-self-heal.timer`. It checks the local health endpoint every two minutes, restarts Docker when necessary, and brings the existing Compose containers back up without rebuilding. Deployment keeps a last-known-good Git ref and restores it when a build or health check fails.
 

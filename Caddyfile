@@ -6,3 +6,21 @@
         Strict-Transport-Security "max-age=31536000; includeSubDomains"
     }
 }
+
+# Restrict this hostname to Tailscale source addresses. A public DNS record is
+# acceptable for certificate issuance; the handler below still blocks access.
+{$ADMIN_DOMAIN:admin.datacenterimpact.app} {
+    encode gzip zstd
+    @tailnet remote_ip 100.64.0.0/10
+    handle @tailnet {
+        reverse_proxy web:3000
+    }
+    handle {
+        respond "Not found" 404
+    }
+    header {
+        -Server
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+        Cache-Control "no-store"
+    }
+}

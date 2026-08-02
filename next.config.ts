@@ -16,6 +16,7 @@ const nextConfig: NextConfig = {
         ],
       },
       { source: '/api/geocode/:path*', headers: [{ key: 'Cache-Control', value: 'no-store' }] },
+      { source: '/admin/:path*', headers: [{ key: 'Cache-Control', value: 'no-store' }] },
     ]
   },
 }
