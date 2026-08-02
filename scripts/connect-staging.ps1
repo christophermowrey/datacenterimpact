@@ -1,5 +1,5 @@
 param(
-  [string]$HostAddress = '13.221.172.208',
+  [string]$HostAddress = '100.62.20.61',
   [string]$KeyPath = 'C:\Users\chris\DeprecatedOneDrive\Desktop\datacenter-impact-staging-ssh.pem'
 )
 

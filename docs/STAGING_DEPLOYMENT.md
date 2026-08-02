@@ -45,7 +45,7 @@ From Windows PowerShell, use the local helper with the staging static IP:
 The helper uses the local key at `C:\Users\chris\DeprecatedOneDrive\Desktop\datacenter-impact-staging-ssh.pem` and connects as `ubuntu`. Override the host or key when needed:
 
 ```powershell
-.\scripts\connect-staging.ps1 -HostAddress 13.221.172.208 -KeyPath "C:\path\to\key.pem"
+ .\scripts\connect-staging.ps1 -HostAddress 100.62.20.61 -KeyPath "C:\path\to\key.pem"
 ```
 
 ## Deployments
