@@ -36,6 +36,7 @@ jobs:
           role-to-assume: ${{ vars.AWS_ROLE_ARN }}
           aws-region: ${{ vars.AWS_REGION }}
           role-session-name: data-center-impact-staging
+          role-skip-session-tagging: true
 
       - name: Fetch staging application secret
         env:
