@@ -1,0 +1,18 @@
+import Link from 'next/link'
+import { getCandidateDetail } from '@/lib/inventory'
+
+export const dynamic = 'force-dynamic'
+
+export default async function CandidatePage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params
+  const result = await getCandidateDetail(slug)
+  if (!result.row) return <main className="admin-page"><p className="eyebrow">Candidate review</p><h1>Candidate unavailable</h1><p className="admin-lede">{result.error ?? 'This candidate could not be loaded.'}</p><p><Link href="/admin">Back to admin</Link></p></main>
+  const candidate = result.row
+  return <main className="admin-page"><header className="admin-header"><div><p className="eyebrow">Candidate review · read-only</p><h1>{candidate.name}</h1><p className="admin-lede">This record is not published. Review its evidence before deciding whether it should be promoted, merged, archived, or excluded.</p></div><div className="admin-meta"><span>{candidate.confidence}</span><small>{candidate.slug}</small></div></header>
+    <section className="admin-grid" aria-label="Candidate summary"><article className="admin-card"><p className="admin-label">Lifecycle</p><strong className="admin-value">{candidate.lifecycleStatus}</strong><p>Current research label</p></article><article className="admin-card"><p className="admin-label">Location</p><strong className="admin-value">{candidate.locationPrecision}</strong><p>{[candidate.city, candidate.county].filter(Boolean).join(' · ') || 'Unresolved'}</p></article><article className="admin-card"><p className="admin-label">Sources</p><strong className="admin-value">{candidate.sourceCount}</strong><p>{candidate.reportCount} research reports</p></article></section>
+    <section className="admin-columns"><article className="admin-panel"><div className="admin-panel-heading"><h2>Identity</h2><span>record fields</span></div><dl className="admin-list"><div><dt>Operator</dt><dd>{candidate.operatorName ?? 'Unknown'}</dd></div><div><dt>Address</dt><dd>{candidate.address ?? 'Unknown'}</dd></div></dl>{candidate.summary && <p className="admin-note">{candidate.summary}</p>}</article><article className="admin-panel"><div className="admin-panel-heading"><h2>Unknowns</h2><span>{candidate.unknowns.length}</span></div>{candidate.unknowns.length ? <ul>{candidate.unknowns.map((unknown) => <li key={unknown}>{unknown}</li>)}</ul> : <p className="admin-note">No unknowns recorded.</p>}</article></section>
+    <section className="admin-panel"><div className="admin-panel-heading"><h2>Claims</h2><span>{candidate.claims.length}</span></div>{candidate.claims.length ? <div style={{ overflowX: 'auto' }}><table className="admin-table"><thead><tr><th>Claim</th><th>Value</th><th>Evidence</th><th>Excerpt</th></tr></thead><tbody>{candidate.claims.map((claim, index) => <tr key={`${claim.key}-${index}`}><td>{claim.key}</td><td><code>{JSON.stringify(claim.value)}</code></td><td>{claim.evidenceStatus}</td><td>{claim.excerpt ?? 'Not captured'}</td></tr>)}</tbody></table></div> : <p className="admin-note">No claims recorded.</p>}</section>
+    <section className="admin-panel"><div className="admin-panel-heading"><h2>Sources</h2><span>{candidate.sources.length}</span></div>{candidate.sources.length ? <ul className="admin-links">{candidate.sources.map((source) => <li key={source.url}><a href={source.url} target="_blank" rel="noreferrer">{source.title ?? source.publisher} <b>-&gt;</b></a><small>{source.publisher} · {source.sourceRole} · {new Date(source.accessedAt).toLocaleDateString()}</small></li>)}</ul> : <p className="admin-note">No sources attached.</p>}</section>
+    <p><Link href="/admin">Back to candidate queue</Link></p>
+  </main>
+}
