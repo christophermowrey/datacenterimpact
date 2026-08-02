@@ -11,6 +11,7 @@ concurrency:
 
 permissions:
   contents: read
+  id-token: write
 
 jobs:
   deploy:
@@ -28,6 +29,46 @@ jobs:
           test -n "$USER"
           test -n "$KEY"
           test -n "$KNOWN_HOSTS"
+
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_ROLE_ARN }}
+          aws-region: ${{ vars.AWS_REGION }}
+          role-session-name: data-center-impact-staging
+
+      - name: Fetch staging application secret
+        env:
+          AWS_REGION: ${{ vars.AWS_REGION }}
+        run: |
+          umask 077
+          aws secretsmanager get-secret-value \
+            --secret-id data-center-impact/staging/application \
+            --region "$AWS_REGION" \
+            --query SecretString \
+            --output text | jq -r 'fromjson | to_entries[] | "\(.key)=\(.value)"' > "$RUNNER_TEMP/data-center-impact-app-secret.env"
+
+      - name: Sync staging application secret
+        env:
+          HOST: ${{ secrets.LIGHTSAIL_HOST }}
+          USER: ${{ secrets.LIGHTSAIL_USER }}
+          SSH_KEY: ${{ secrets.LIGHTSAIL_SSH_KEY }}
+          KNOWN_HOSTS: ${{ secrets.LIGHTSAIL_KNOWN_HOSTS }}
+        run: |
+          install -m 700 -d "$HOME/.ssh"
+          printf '%s\n' "$SSH_KEY" > "$HOME/.ssh/lightsail_deploy_key"
+          printf '%s\n' "$KNOWN_HOSTS" > "$HOME/.ssh/known_hosts"
+          chmod 600 "$HOME/.ssh/lightsail_deploy_key" "$HOME/.ssh/known_hosts"
+          scp -o BatchMode=yes -o ConnectTimeout=15 -o IdentitiesOnly=yes -i "$HOME/.ssh/lightsail_deploy_key" "$RUNNER_TEMP/data-center-impact-app-secret.env" "$USER@$HOST:/tmp/data-center-impact-app-secret.env"
+          timeout 30s ssh -o BatchMode=yes -o ConnectTimeout=15 -o IdentitiesOnly=yes -i "$HOME/.ssh/lightsail_deploy_key" "$USER@$HOST" 'sudo bash -s' <<'REMOTE'
+          set -Eeuo pipefail
+          secret_file=/tmp/data-center-impact-app-secret.env
+          env_file=/etc/data-center-impact/app.env
+          temp_file="$(mktemp)"
+          sudo awk -F= 'NR == FNR { values[$1] = $0; next } !($1 in values) { print } END { for (key in values) print values[key] }' "$secret_file" "$env_file" > "$temp_file"
+          sudo install -o root -g root -m 600 "$temp_file" "$env_file"
+          rm -f "$secret_file" "$temp_file"
+          REMOTE
 
       - name: Deploy over SSH
         env:
