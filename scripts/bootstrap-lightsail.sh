@@ -41,5 +41,12 @@ if ! sudo grep -q '^NEXT_PUBLIC_SHOW_CANDIDATES=' "$env_file"; then
   echo 'NEXT_PUBLIC_SHOW_CANDIDATES=true' | sudo tee -a "$env_file" >/dev/null
 fi
 
+if ! sudo grep -q '^ADMIN_DOMAIN=' "$env_file"; then
+  echo 'ADMIN_DOMAIN=admin.staging.datacenterimpact.app' | sudo tee -a "$env_file" >/dev/null
+fi
+if ! sudo grep -q '^ADMIN_ENABLED=' "$env_file"; then
+  echo 'ADMIN_ENABLED=false' | sudo tee -a "$env_file" >/dev/null
+fi
+
 sudo /usr/local/sbin/data-center-impact-deploy
 echo "Lightsail staging bootstrap complete. Environment: $env_file"

@@ -20,7 +20,7 @@ services:
       ADMIN_ENABLED: ${ADMIN_ENABLED:-false}
       ADMIN_USERNAME: ${ADMIN_USERNAME:-}
       ADMIN_PASSWORD: ${ADMIN_PASSWORD:-}
-      DATABASE_URL: ${DATABASE_URL:-}
+      DATABASE_URL: ${DATABASE_URL:-postgres://data_center_impact:${POSTGRES_PASSWORD}@db:5432/data_center_impact}
       STORAGE_PATH: ${STORAGE_PATH:-/app}
       ADMIN_UPTIME_URL: ${ADMIN_UPTIME_URL:-}
       ADMIN_COSTS_URL: ${ADMIN_COSTS_URL:-}
