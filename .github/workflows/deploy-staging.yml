@@ -47,7 +47,7 @@ jobs:
             --secret-id data-center-impact/staging/application \
             --region "$AWS_REGION" \
             --query SecretString \
-            --output text | jq -r 'fromjson | to_entries[] | "\(.key)=\(.value)"' > "$RUNNER_TEMP/data-center-impact-app-secret.env"
+            --output text | jq -r 'to_entries[] | "\(.key)=\(.value)"' > "$RUNNER_TEMP/data-center-impact-app-secret.env"
 
       - name: Sync staging application secret
         env:
