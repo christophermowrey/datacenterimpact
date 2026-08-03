@@ -65,4 +65,4 @@ Copy `.env.example` to `.env.local`. Map style and geocoder settings are intenti
 
 ## Private operations panel
 
-The optional read-only admin panel is available at `/admin` when explicitly enabled. It is intended for a Tailscale-only `ADMIN_DOMAIN` and requires server-side HTTP Basic Auth credentials. It reports local process, filesystem, and configuration status; uptime, metrics, and cloud cost dashboards remain separate services. See `docs/ADMIN_PANEL.md` for deployment requirements.
+The optional read-only admin panel is available at `/admin` when explicitly enabled. It is intended for a Tailscale-only `ADMIN_DOMAIN` and requires server-side session login credentials. It reports local process, filesystem, and configuration status; uptime, metrics, and cloud cost dashboards remain separate services. See `docs/ADMIN_PANEL.md` for deployment requirements.

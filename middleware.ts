@@ -1,28 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
+import { SESSION_COOKIE, verifyAdminSession } from '@/lib/admin-auth'
 
-function unauthorized() {
-  return new NextResponse('Authentication required', {
-    status: 401,
-    headers: { 'WWW-Authenticate': 'Basic realm="Data Center Impact admin"' },
-  })
-}
-
-function credentialsMatch(request: NextRequest) {
-  const header = request.headers.get('authorization')
-  if (!header?.startsWith('Basic ')) return false
-
-  try {
-    const decoded = atob(header.slice(6))
-    const separator = decoded.indexOf(':')
-    if (separator < 0) return false
-    return decoded.slice(0, separator) === process.env.ADMIN_USERNAME
-      && decoded.slice(separator + 1) === process.env.ADMIN_PASSWORD
-  } catch {
-    return false
-  }
-}
-
-export function middleware(request: NextRequest) {
+export async function middleware(request: NextRequest) {
   if (process.env.ADMIN_ENABLED !== 'true') {
     return new NextResponse('Not found', { status: 404 })
   }
@@ -31,7 +10,10 @@ export function middleware(request: NextRequest) {
     return new NextResponse('Admin authentication is not configured', { status: 503 })
   }
 
-  return credentialsMatch(request) ? NextResponse.next() : unauthorized()
+  if (request.nextUrl.pathname === '/admin/login') return NextResponse.next()
+
+  const authenticated = await verifyAdminSession(request.cookies.get(SESSION_COOKIE)?.value, process.env.ADMIN_PASSWORD)
+  return authenticated ? NextResponse.next() : NextResponse.redirect(new URL('/admin/login', request.url))
 }
 
 export const config = {

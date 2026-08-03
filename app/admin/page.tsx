@@ -42,7 +42,7 @@ export default async function AdminPage() {
           <h1>System overview</h1>
           <p className="admin-lede">A read-only view of this Data Center Impact instance. Billing and uptime details stay in their provider dashboards.</p>
         </div>
-        <div className="admin-meta"><span>ADMIN</span><small>{new Date(snapshot.generatedAt).toLocaleString()}</small></div>
+        <div className="admin-meta"><span>ADMIN</span><small>{new Date(snapshot.generatedAt).toLocaleString()}</small><form action="/api/admin/logout" method="post"><button type="submit">Sign out</button></form></div>
       </header>
 
       <section className="admin-grid" aria-label="System status">

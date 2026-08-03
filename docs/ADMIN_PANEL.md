@@ -1,6 +1,6 @@
 # Private admin panel
 
-The admin panel is an operational read-only view at `/admin`. It is disabled by default and requires HTTP Basic Auth configured with `ADMIN_USERNAME` and `ADMIN_PASSWORD`.
+The admin panel is an operational read-only view at `/admin`. It is disabled by default and requires a session login configured with `ADMIN_USERNAME` and `ADMIN_PASSWORD`.
 
 ## Production access
 
@@ -8,7 +8,7 @@ The admin panel is an operational read-only view at `/admin`. It is disabled by 
 2. Set `ADMIN_DOMAIN` to the hostname you use for the operator panel.
 3. Choose a certificate strategy. The simplest option is a public DNS record for `ADMIN_DOMAIN` so Caddy can obtain a normal certificate; the Caddy source restriction still blocks non-Tailscale requests. Alternatively, configure Caddy DNS-01 or use an internal certificate with a trust process for your devices.
 4. Confirm Caddy's Tailscale source restriction is active and keep PostgreSQL private. The included configuration allows Tailscale IPv4 addresses (`100.64.0.0/10`) and returns `404` to other sources.
-5. Open `https://admin.example.com/admin` from a device connected to the tailnet. The browser will request the configured username and password.
+5. Open `https://admin.example.com/admin/login` from a device connected to the tailnet. The login form stores an encrypted, eight-hour session cookie in the browser.
 
 The application performs its own credential check in addition to the private network boundary. A request to the public hostname or directly to the Next.js port is not a substitute for authentication.
 
@@ -20,4 +20,4 @@ Do not put cloud billing credentials, monitoring API keys, database passwords, l
 
 ## Local testing
 
-Copy `.env.example` to `.env.local`, set `ADMIN_ENABLED=true`, `ADMIN_USERNAME`, and `ADMIN_PASSWORD`, then run the app. Visit `http://localhost:3000/admin` and authenticate when prompted. Keep `ADMIN_ENABLED=false` in deployments that do not have a private access path.
+Copy `.env.example` to `.env.local`, set `ADMIN_ENABLED=true`, `ADMIN_USERNAME`, and `ADMIN_PASSWORD`, then run the app. Visit `http://localhost:3000/admin/login` and sign in. Keep `ADMIN_ENABLED=false` in deployments that do not have a private access path.
