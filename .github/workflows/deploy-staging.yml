@@ -30,7 +30,7 @@ jobs:
           test -n "$KEY"
           test -n "$KNOWN_HOSTS"
 
-      - name: Configure AWS credentials
+      - name: Inspect OIDC claims
         run: |
           token_json="$(curl --fail --silent --show-error \
             -H "Authorization: bearer $ACTIONS_ID_TOKEN_REQUEST_TOKEN" \
@@ -39,7 +39,6 @@ jobs:
           payload="$(printf '%s' "$token" | cut -d. -f2 | tr '_-' '/+')"
           case $((${#payload} % 4)) in 2) payload="${payload}==";; 3) payload="${payload}=";; esac
           printf '%s' "$payload" | base64 -d 2>/dev/null | jq '{iss, sub, aud, repository, ref, workflow}'
-        name: Inspect OIDC claims
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
