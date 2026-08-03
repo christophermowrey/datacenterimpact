@@ -1,6 +1,6 @@
 {$DOMAIN:datacenterimpact.app} {
     encode gzip zstd
-    reverse_proxy web:3000
+    reverse_proxy 127.0.0.1:3000
     header {
         -Server
         Strict-Transport-Security "max-age=31536000; includeSubDomains"
@@ -13,7 +13,7 @@
     encode gzip zstd
     @tailnet remote_ip 100.64.0.0/10
     handle @tailnet {
-        reverse_proxy web:3000
+        reverse_proxy 127.0.0.1:3000
     }
     handle {
         respond "Not found" 404
