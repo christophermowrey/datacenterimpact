@@ -8,10 +8,10 @@ export async function POST(request: Request) {
   const username = String(form.get('username') ?? '')
   const password = String(form.get('password') ?? '')
   if (username !== process.env.ADMIN_USERNAME || password !== process.env.ADMIN_PASSWORD) {
-    return NextResponse.redirect(new URL('/admin/login?error=1', request.url), 303)
+    return new NextResponse(null, { status: 303, headers: { Location: '/admin/login?error=1' } })
   }
 
-  const response = NextResponse.redirect(new URL('/admin', request.url), 303)
+  const response = new NextResponse(null, { status: 303, headers: { Location: '/admin' } })
   response.cookies.set(SESSION_COOKIE, await createAdminSession(username, password), {
     httpOnly: true,
     secure: true,
